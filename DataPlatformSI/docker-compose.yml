@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  dataplatformsi.webapi:
+    image: ${DOCKER_REGISTRY}dataplatformsiwebapi
+    build:
+      context: .
+      dockerfile: DataPlatformSI.WebAPI/Dockerfile
