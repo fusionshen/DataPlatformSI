@@ -4,20 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using DataPlatformSI.DataAccess;
-using DataPlatformSI.DataAccess.Models;
-using DataPlatformSI.DataAccess.Repositories;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OData.Edm;
 using Swashbuckle.AspNetCore.Swagger;
@@ -36,115 +34,110 @@ namespace DataPlatformSI.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOData();
-
-            services.AddScoped<ProductsRepository>();
-            services.AddDbContext<ProductContext>(options =>
-                 options.UseSqlServer(Configuration.GetConnectionString("ProductContext")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddApiVersioning(options => options.ReportApiVersions = true);
+            services.AddOData().EnableApiVersioning();
+            services.AddODataApiExplorer(
+                options =>
+                {
+                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                    options.GroupNameFormat = "'v'VVV";
 
-            // Workaround: https://github.com/OData/WebApi/issues/1177
-            services.AddMvcCore(options =>
-            {
-                foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                    // can also be used to control the format of the API version in route templates
+                    options.SubstituteApiVersionInUrl = true;
+                });
+            services.AddSwaggerGen(
+                options =>
                 {
-                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                }
-                foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
-                {
-                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                }
-            });
+                    // resolve the IApiVersionDescriptionProvider service
+                    // note: that we have to build a temporary service provider here because one has not been created yet
+                    var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Products API",
-                    Description = "A products Web API demonstrating action return types"
+                    // add a swagger document for each discovered API version
+                    // note: you might choose to skip or document deprecated API versions differently
+                    foreach (var description in provider.ApiVersionDescriptions)
+                    {
+                        options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
+                    }
+
+                    // add a custom operation filter which sets default values
+                    options.OperationFilter<SwaggerDefaultValues>();
+
+                    // integrate xml comments
+                    options.IncludeXmlComments(XmlCommentsFilePath);
                 });
 
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
+
+            //services.AddScoped<ProductsRepository>();
+            //services.AddDbContext<ProductContext>(options =>
+            //     options.UseSqlServer(Configuration.GetConnectionString("ProductContext")));
+        
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        /// <summary>
+        /// Configures the application using the provided builder, hosting environment, and logging factory.
+        /// </summary>
+        /// <param name="app">The current application builder.</param>
+        /// <param name="env">The current hosting environment.</param>
+        /// <param name="modelBuilder">The <see cref="VersionedODataModelBuilder">model builder</see> used to create OData entity data models (EDMs).</param>
+        /// <param name="provider">The API version descriptor provider used to enumerate defined API versions.</param>
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, VersionedODataModelBuilder modelBuilder, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-                loggerFactory.AddDebug();
+                //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+                //loggerFactory.AddDebug();
             }
             else
             {
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseMvc(routeBuilder => routeBuilder.MapVersionedODataRoutes("odata", "api", modelBuilder.GetEdmModels()));
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My ASP.NET Core 2.1 API v1");
-                c.RoutePrefix = string.Empty;
-            });
-
-            //var builder = new ODataConventionModelBuilder(app.ApplicationServices);
-
-            //builder.EntitySet<Product>("Products");
-
-            app.UseMvc(routes =>
-            {
-                routes.MapODataServiceRoute("odata", "odata", GetEdmModel());
-
-                // Workaround: https://github.com/OData/WebApi/issues/1175
-                routes.EnableDependencyInjection();
-            });
+            app.UseSwaggerUI(
+                options =>
+                {
+                    // build a swagger endpoint for each discovered API version
+                    foreach (var description in provider.ApiVersionDescriptions)
+                    {
+                        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                    }
+                });
         }
 
-        // Builds the EDM model for the OData service, including the OData action definitions.
-        private static IEdmModel GetEdmModel()
+       
+        static string XmlCommentsFilePath
         {
-            ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
-            modelBuilder.EntitySet<Product>("Products");
+            get
+            {
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
+                return Path.Combine(basePath, fileName);
+            }
+        }
 
-            var moviesEntitySet = modelBuilder.EntitySet<Movie>("Movies");
+        static Info CreateInfoForApiVersion(ApiVersionDescription description)
+        {
+            var info = new Info()
+            {
+                Title = $"Sample API {description.ApiVersion}",
+                Version = description.ApiVersion.ToString(),
+                Description = "A sample application with Swagger, Swashbuckle, and API versioning.",
+                Contact = new Contact() { Name = "Bill Mei", Email = "bill.mei@somewhere.com" },
+                TermsOfService = "Shareware",
+                License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
+            };
 
-            // Now add actions.
+            if (description.IsDeprecated)
+            {
+                info.Description += " This API version has been deprecated.";
+            }
 
-            // CheckOut
-            // URI: ~/odata/Movies(1)/ODataActionSample.Models.CheckOut
-            ActionConfiguration checkOutAction = modelBuilder.EntityType<Movie>().Action("CheckOut");
-            checkOutAction.ReturnsFromEntitySet<Movie>("Movies");
-
-            // ReturnMovie
-            // URI: ~/odata/Movies(1)/ODataActionSample.Models.Return
-            // Binds to a single entity; no parameters.
-            ActionConfiguration returnAction = modelBuilder.EntityType<Movie>().Action("Return");
-            returnAction.ReturnsFromEntitySet<Movie>("Movies");
-
-            // CheckOutMany action
-            // URI: ~/odata/Movies/ODataActionSample.Models.CheckOutMany
-            // Binds to a collection of entities.  This action accepts a collection of parameters.
-            ActionConfiguration checkOutManyAction = modelBuilder.EntityType<Movie>().Collection.Action("CheckOutMany");
-            checkOutManyAction.CollectionParameter<int>("MovieIDs");
-            checkOutManyAction.ReturnsCollectionFromEntitySet<Movie>("Movies");
-
-            // CreateMovie action
-            // URI: ~/odata/CreateMovie
-            // Unbound action. It is invoked from the service root.
-            ActionConfiguration createMovieAction = modelBuilder.Action("CreateMovie");
-            createMovieAction.Parameter<string>("Title");
-            createMovieAction.ReturnsFromEntitySet<Movie>("Movies");
-
-            modelBuilder.Namespace = typeof(Movie).Namespace;
-
-            return modelBuilder.GetEdmModel();
+            return info;
         }
     }
 }

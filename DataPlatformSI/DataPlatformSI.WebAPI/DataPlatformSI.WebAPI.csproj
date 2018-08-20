@@ -15,13 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="microsoft.aspnetcore.odata" Version="7.0.1" />
+    <PackageReference Include="microsoft.aspnetcore.all" Version="2.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.OData.Versioning.ApiExplorer" Version="3.0.0-beta1" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
     <PackageReference Include="swashbuckle.aspnetcore" Version="3.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DataPlatformSI.DataAccess\DataPlatformSI.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
