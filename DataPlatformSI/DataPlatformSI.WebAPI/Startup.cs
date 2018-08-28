@@ -75,12 +75,22 @@ namespace DataPlatformSI.WebAPI
 
                     // integrate xml comments
                     options.IncludeXmlComments(XmlCommentsFilePath);
+
+                    //options.AddSecurityDefinition(
+                    //    "oauth2",
+                    //    new OAuth2Scheme
+                    //    {
+                    //        Type = "oauth2",
+                    //        Flow = "implicit",
+                    //        Description = "OAuth2.0 implicit flow",
+                    //        TokenUrl = Configuration.GetValue("jwtIss", Configuration["Jwt:Iss"]) + "/connect/token",
+                    //        AuthorizationUrl = Configuration.GetValue("jwtIss", Configuration["Jwt:Iss"]) + "/connect/authorize",
+                    //        Scopes = new Dictionary<string, string> { { "api1", "Access scope for PT"} }
+                    //    });
+                    //options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "oauth2", new[] { "api1" } } });
                 });
+            
 
-
-            //services.AddScoped<ProductsRepository>();
-            //services.AddDbContext<ProductContext>(options =>
-            //     options.UseSqlServer(Configuration.GetConnectionString("ProductContext")));
 
             // ===== Add our DbContext ========
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -94,12 +104,12 @@ namespace DataPlatformSI.WebAPI
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 1;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
+                options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
-                options.Password.RequiredUniqueChars = 6;
+                options.Password.RequiredUniqueChars = 1;
 
                 // Lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
@@ -107,7 +117,7 @@ namespace DataPlatformSI.WebAPI
                 options.Lockout.AllowedForNewUsers = true;
 
                 // User settings
-                options.User.RequireUniqueEmail = true;
+                //options.User.RequireUniqueEmail = true;
             });
 
             // ===== Add Jwt Authentication ========
@@ -156,8 +166,8 @@ namespace DataPlatformSI.WebAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-                //loggerFactory.AddDebug();
+                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+                loggerFactory.AddDebug();
 
                 //app.UseBrowserLink();
                 //app.UseDatabaseErrorPage(); mvc中的数据库报错页面，可初始化
@@ -168,8 +178,12 @@ namespace DataPlatformSI.WebAPI
             }
             // ===== Use Authentication ======
             app.UseAuthentication();
-
-            app.UseMvc(routeBuilder => routeBuilder.MapVersionedODataRoutes("odata", "api", modelBuilder.GetEdmModels()));
+            app.UseMvc(routeBuilder =>
+            {
+                var models = modelBuilder.GetEdmModels();
+                routeBuilder.MapVersionedODataRoutes("odata", "api", models);
+                //routeBuilder.MapVersionedODataRoutes("odata-bypath", "v{version:apiVersion}", models);
+            });
             app.UseSwagger();
             app.UseSwaggerUI(
                 options =>

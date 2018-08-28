@@ -1,10 +1,12 @@
 ﻿using DataPlatformSI.WebAPI.Models;
+using DataPlatformSI.WebAPI.Models.DTOs;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static DataPlatformSI.WebAPI.Controllers.AccountController;
 
 namespace DataPlatformSI.WebAPI.Configuration
 {
@@ -17,10 +19,18 @@ namespace DataPlatformSI.WebAPI.Configuration
         /// <param name="apiVersion">The <see cref="ApiVersion">API version</see> associated with the <paramref name="builder"/>.</param>
         public void Apply(ODataModelBuilder builder, ApiVersion apiVersion)
         {
-            var account = builder.EntitySet<ApplicationUser>("Account").EntityType.HasKey(o => o.Id);
-            builder.Function("Login").Returns<string>();
-            builder.Function("Register").Returns<string>();
-            //account.Action("Login").Returns<string>();
+            builder.EntitySet<ApplicationUser>("Account");
+            var userType = builder.EntityType<ApplicationUser>();
+
+            //var account = builder.EntitySet<ApplicationUser>("Account").EntityType.HasKey(o => o.Id);
+            userType.Collection.Function("Login").Returns<string>();
+            userType.Collection.Function("Register").Returns<string>();
+            userType.Collection.Function("Protected").Returns<string>();
+
+            //builder.Function("Register").Returns<string>();
+
+
+
             //if (apiVersion < ApiVersions.V2)
             //{
             //    order.Ignore(o => o.EffectiveDate);

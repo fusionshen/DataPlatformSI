@@ -17,7 +17,6 @@ namespace DataPlatformSI.WebAPI.Configuration
         public void Apply(ODataModelBuilder builder, ApiVersion apiVersion)
         {
             builder.Function("GetSalesTaxRate").Returns<double>().Parameter<int>("PostalCode");
-            //builder.Function("Login").Returns<string>();
         }
     }
 }

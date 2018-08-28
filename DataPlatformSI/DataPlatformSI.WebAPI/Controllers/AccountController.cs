@@ -1,4 +1,5 @@
 ﻿using DataPlatformSI.WebAPI.Models;
+using DataPlatformSI.WebAPI.Models.DTOs;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Authorization;
@@ -20,9 +21,7 @@ namespace DataPlatformSI.WebAPI.Controllers
     //[ApiVersion("1.0")]
     //[ApiVersion("0.9", Deprecated = true)]
     [ApiVersionNeutral]
-    //[ControllerName("Account")]
-    //[ODataRoutePrefix("Account")]
-    //[Route("[controller]/[action]")]
+    [ODataRoutePrefix("Account")]
     public class AccountController : ODataController
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -44,12 +43,12 @@ namespace DataPlatformSI.WebAPI.Controllers
         [ODataRoute("Login")]
         public async Task<object> Login([FromBody] LoginDto model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
 
             if (result.Succeeded)
             {
-                var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-                return await GenerateJwtToken(model.Email, appUser);
+                var appUser = _userManager.Users.SingleOrDefault(r => r.UserName == model.UserName);
+                return Ok(GenerateJwtToken(model.UserName, appUser));
             }
 
             throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
@@ -61,29 +60,28 @@ namespace DataPlatformSI.WebAPI.Controllers
         {
             var user = new ApplicationUser
             {
-                UserName = model.Email,
-                Email = model.Email
+                UserName = model.UserName
             };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return await GenerateJwtToken(model.Email, user);
+                return Ok (GenerateJwtToken(model.UserName, user));
             }
 
             throw new ApplicationException("UNKNOWN_ERROR");
         }
 
-        //[Authorize]
-        //[HttpGet]
-        //[ODataRoute("Protected")]
-        //public async Task<object> Protected()
-        //{
-        //    return "Protected area";
-        //}
+        [Authorize]
+        [HttpGet]
+        [ODataRoute("Protected")]
+        public async Task<object> Protected()
+        {
+            return "Protected area";
+        }
 
-        private async Task<object> GenerateJwtToken(string email, IdentityUser user)
+        private string GenerateJwtToken(string email, IdentityUser user)
         {
             var claims = new List<Claim>
             {
@@ -107,24 +105,26 @@ namespace DataPlatformSI.WebAPI.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public class LoginDto
-        {
-            [Required]
-            public string Email { get; set; }
+        //public class LoginDto
+        //{
+        //    [Required]
+        //    public string UserName { get; set; }
 
-            [Required]
-            public string Password { get; set; }
+        //    [Required]
+        //    public string Password { get; set; }
 
-        }
+        //    public bool RememberMe { get; set; }
 
-        public class RegisterDto
-        {
-            [Required]
-            public string Email { get; set; }
+        //}
 
-            [Required]
-            [StringLength(100, ErrorMessage = "PASSWORD_MIN_LENGTH", MinimumLength = 6)]
-            public string Password { get; set; }
-        }
+        //public class RegisterDto
+        //{
+        //    [Required]
+        //    public string UserName { get; set; }
+
+        //    [Required]
+        //    [StringLength(100, ErrorMessage = "PASSWORD_MIN_LENGTH", MinimumLength = 6)]
+        //    public string Password { get; set; }
+        //}
     }
 }

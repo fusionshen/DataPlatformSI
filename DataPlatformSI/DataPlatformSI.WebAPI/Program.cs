@@ -19,7 +19,6 @@ namespace DataPlatformSI.WebAPI
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseEnvironment("Development");
+                .UseStartup<Startup>();
     }
 }
