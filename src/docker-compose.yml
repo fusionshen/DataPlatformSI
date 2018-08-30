@@ -5,4 +5,4 @@ services:
     image: ${DOCKER_REGISTRY}dataplatformsiwebapi
     build:
       context: .
-      dockerfile: DataPlatformSI.WebAPI/Dockerfile
+      dockerfile: ./DataPlatformSI.WebAPI/Dockerfile

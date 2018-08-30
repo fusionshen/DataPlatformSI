@@ -1,4 +1,5 @@
-﻿using DataPlatformSI.WebAPI.Models;
+﻿using DataPlatformSI.DomainClasses;
+using DataPlatformSI.WebAPI.Models;
 using DataPlatformSI.WebAPI.Models.DTOs;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +25,13 @@ namespace DataPlatformSI.WebAPI.Configuration
 
             //var account = builder.EntitySet<ApplicationUser>("Account").EntityType.HasKey(o => o.Id);
             userType.Collection.Function("Login").Returns<string>();
+            //userType.Collection.Function("RefreshToken").Returns<string>();
+            //userType.Collection.Function("Logout").Returns<bool>();
+            //userType.Collection.Function("IsAuthenticated").Returns<bool>();
+            //userType.Collection.Function("GetUserInfo").Returns<bool>();
+
             userType.Collection.Function("Register").Returns<string>();
             userType.Collection.Function("Protected").Returns<string>();
-
-            //builder.Function("Register").Returns<string>();
 
 
 

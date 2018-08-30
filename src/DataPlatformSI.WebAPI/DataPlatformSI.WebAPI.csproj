@@ -17,6 +17,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
+    <Compile Remove="Migrations\**" />
+    <Content Remove="Data\**" />
+    <Content Remove="Migrations\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Data\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -25,6 +36,11 @@
     <PackageReference Include="Microsoft.AspNetCore.OData.Versioning.ApiExplorer" Version="3.0.0-beta1" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
     <PackageReference Include="swashbuckle.aspnetcore" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataPlatformSI.DataLayer\DataPlatformSI.DataLayer.csproj" />
+    <ProjectReference Include="..\DataPlatformSI.Services\DataPlatformSI.Services.csproj" />
   </ItemGroup>
 
 </Project>
