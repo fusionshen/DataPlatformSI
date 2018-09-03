@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using DataPlatformSI.DataLayer.Context;
+using DataPlatformSI.DomainClasses;
 using DataPlatformSI.Services;
 using DataPlatformSI.WebAPI.Models;
 using Microsoft.AspNet.OData.Builder;
@@ -143,57 +144,76 @@ namespace DataPlatformSI.WebAPI
 
             services.AddMvc(options =>
             {
-               //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+               options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddApiVersioning(options => options.ReportApiVersions = true);
-            services.AddOData().EnableApiVersioning();
-            services.AddODataApiExplorer(
-                options =>
-                {
-                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
-                    options.GroupNameFormat = "'v'VVV";
+            services.AddOData();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                   new Info()
+                   {
+                       Title = $"DataPlatform API V1",
+                       Version = "V1",
+                       Description = "A webapi application with Swagger, Swashbuckle, and API versioning.",
+                       Contact = new Contact() { Name = "Fusion Shen", Email = "fusionshen@hotmail.com" },
+                       TermsOfService = "Shareware",
+                       License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
+                   }
+                );
+                c.IncludeXmlComments(XmlCommentsFilePath);
+            });
 
-                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-                    // can also be used to control the format of the API version in route templates
-                    options.SubstituteApiVersionInUrl = true;
-                });
-            services.AddSwaggerGen(
-                options =>
-                {
-                    // resolve the IApiVersionDescriptionProvider service
-                    // note: that we have to build a temporary service provider here because one has not been created yet
-                    var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+            #region apiversioning
+            //services.AddApiVersioning(options => options.ReportApiVersions = true);
+            //services.AddOData().EnableApiVersioning();
+            //services.AddODataApiExplorer(
+            //    options =>
+            //    {
+            //        // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+            //        // note: the specified format code will format the version as "'v'major[.minor][-status]"
+            //        options.GroupNameFormat = "'v'VVV";
 
-                    // add a swagger document for each discovered API version
-                    // note: you might choose to skip or document deprecated API versions differently
-                    foreach (var description in provider.ApiVersionDescriptions)
-                    {
-                        options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
-                    }
+            //        // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+            //        // can also be used to control the format of the API version in route templates
+            //        options.SubstituteApiVersionInUrl = true;
+            //    });
+            //services.AddSwaggerGen(
+            //    options =>
+            //    {
+            //        // resolve the IApiVersionDescriptionProvider service
+            //        // note: that we have to build a temporary service provider here because one has not been created yet
+            //        var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
 
-                    // add a custom operation filter which sets default values
-                    options.OperationFilter<SwaggerDefaultValues>();
+            //        // add a swagger document for each discovered API version
+            //        // note: you might choose to skip or document deprecated API versions differently
+            //        foreach (var description in provider.ApiVersionDescriptions)
+            //        {
+            //            options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
+            //        }
 
-                    // integrate xml comments
-                    options.IncludeXmlComments(XmlCommentsFilePath);
+            //        // add a custom operation filter which sets default values
+            //        options.OperationFilter<SwaggerDefaultValues>();
 
-                    //options.AddSecurityDefinition(
-                    //    "oauth2",
-                    //    new OAuth2Scheme
-                    //    {
-                    //        Type = "oauth2",
-                    //        Flow = "implicit",
-                    //        Description = "OAuth2.0 implicit flow",
-                    //        TokenUrl = Configuration.GetValue("jwtIss", Configuration["Jwt:Iss"]) + "/connect/token",
-                    //        AuthorizationUrl = Configuration.GetValue("jwtIss", Configuration["Jwt:Iss"]) + "/connect/authorize",
-                    //        Scopes = new Dictionary<string, string> { { "api1", "Access scope for PT"} }
-                    //    });
-                    //options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "oauth2", new[] { "api1" } } });
-                });
-            
+            //        // integrate xml comments
+            //        options.IncludeXmlComments(XmlCommentsFilePath);
 
+            //        //options.AddSecurityDefinition(
+            //        //    "oauth2",
+            //        //    new OAuth2Scheme
+            //        //    {
+            //        //        Type = "oauth2",
+            //        //        Flow = "implicit",
+            //        //        Description = "OAuth2.0 implicit flow",
+            //        //        TokenUrl = Configuration.GetValue("jwtIss", Configuration["Jwt:Iss"]) + "/connect/token",
+            //        //        AuthorizationUrl = Configuration.GetValue("jwtIss", Configuration["Jwt:Iss"]) + "/connect/authorize",
+            //        //        Scopes = new Dictionary<string, string> { { "api1", "Access scope for PT"} }
+            //        //    });
+            //        //options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "oauth2", new[] { "api1" } } });
+            //    });
+            #endregion
+
+            #region Identity
             // ===== Add Identity ========
             //services.AddIdentity<ApplicationUser, IdentityRole>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -217,6 +237,7 @@ namespace DataPlatformSI.WebAPI
             //    // User settings
             //    //options.User.RequireUniqueEmail = true;
             //})
+            #endregion
         }
 
         /// <summary>
@@ -225,14 +246,10 @@ namespace DataPlatformSI.WebAPI
         /// <param name="app">The current application builder.</param>
         /// <param name="env">The current hosting environment.</param>
         /// <param name="loggerFactory"></param>
-        /// <param name="modelBuilder">The <see cref="VersionedODataModelBuilder">model builder</see> used to create OData entity data models (EDMs).</param>
-        /// <param name="provider">The API version descriptor provider used to enumerate defined API versions.</param>
         public void Configure(
             IApplicationBuilder app, 
             IHostingEnvironment env, 
-            ILoggerFactory loggerFactory,
-            VersionedODataModelBuilder modelBuilder, 
-            IApiVersionDescriptionProvider provider)
+            ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -297,9 +314,10 @@ namespace DataPlatformSI.WebAPI
 
             app.UseMvc(routeBuilder =>
             {
-                var models = modelBuilder.GetEdmModels();
-                routeBuilder.MapVersionedODataRoutes("odata", "api", models);
+                //var models = modelBuilder.GetEdmModels();
+                //routeBuilder.MapVersionedODataRoutes("odata", "api", models);
                 //routeBuilder.MapVersionedODataRoutes("odata-bypath", "v{version:apiVersion}", models);
+                routeBuilder.MapODataServiceRoute("odata", "api", GetEdmModel());
             });
 
              // catch-all handler for HTML5 client routes - serve index.html
@@ -313,43 +331,96 @@ namespace DataPlatformSI.WebAPI
             app.UseSwaggerUI(
                 options =>
                 {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "DataPlatform API V1");
                     // build a swagger endpoint for each discovered API version
-                    foreach (var description in provider.ApiVersionDescriptions)
-                    {
-                        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
-                    }
+                    //foreach (var description in provider.ApiVersionDescriptions)
+                    //{
+                    //    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                    //}
                 });
         }
 
-       
+        // Builds the EDM model for the OData service, including the OData action definitions.
+        private static IEdmModel GetEdmModel()
+        {
+            ODataModelBuilder builder = new ODataConventionModelBuilder();
+
+            builder.EntitySet<User>("Account");
+
+            var userType = builder.EntityType<User>();
+
+            // Function bound to a collection
+            // Returns the most expensive product, a single entity
+            userType.Collection
+                .Function("Login")
+                .Returns<object>();
+
+            // Function bound to a collection
+            // Returns the top 10 product, a collection
+            userType.Collection
+                .Function("RefreshToken")
+                .Returns<object>();
+
+            // Function bound to a single entity
+            // Returns the instance's price rank among all products
+            userType.Collection
+                .Function("Logout")
+                .Returns<bool>().Parameter<string>("refreshToken");
+
+            userType.Collection
+                .Function("IsAuthenticated")
+                .Returns<bool>();
+
+            userType.Collection
+                .Function("GetUserInfo")
+                .Returns<object>();
+
+            // Function bound to a single entity
+            // Accept a string as parameter and return a double
+            // This function calculate the general sales tax base on the
+            // state
+            //userType
+            //    .Function("CalculateGeneralSalesTax")
+            //    .Returns<double>()
+            //    .Parameter<string>("state");
+
+            // Unbound Function
+            builder.Function("GetSalesTaxRate")
+                .Returns<double>()
+                .Parameter<string>("state");
+
+            return builder.GetEdmModel();
+        }
+
+
         static string XmlCommentsFilePath
         {
             get
             {
-                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var basePath = System.AppContext.BaseDirectory;
                 var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
                 return Path.Combine(basePath, fileName);
             }
         }
 
-        static Info CreateInfoForApiVersion(ApiVersionDescription description)
-        {
-            var info = new Info()
-            {
-                Title = $"Sample API {description.ApiVersion}",
-                Version = description.ApiVersion.ToString(),
-                Description = "A sample application with Swagger, Swashbuckle, and API versioning.",
-                Contact = new Contact() { Name = "Bill Mei", Email = "bill.mei@somewhere.com" },
-                TermsOfService = "Shareware",
-                License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
-            };
+        //static Info CreateInfoForApiVersion(ApiVersionDescription description)
+        //{
+        //    var info = new Info()
+        //    {
+        //        Title = $"Sample API {description.ApiVersion}",
+        //        Version = description.ApiVersion.ToString(),
+        //        Description = "A sample application with Swagger, Swashbuckle, and API versioning.",
+        //        Contact = new Contact() { Name = "Bill Mei", Email = "bill.mei@somewhere.com" },
+        //        TermsOfService = "Shareware",
+        //        License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
+        //    };
 
-            if (description.IsDeprecated)
-            {
-                info.Description += " This API version has been deprecated.";
-            }
+        //    if (description.IsDeprecated)
+        //    {
+        //        info.Description += " This API version has been deprecated.";
+        //    }
 
-            return info;
-        }
+        //    return info;
+        //}
     }
 }
