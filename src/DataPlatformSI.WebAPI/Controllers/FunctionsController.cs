@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Routing;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace DataPlatformSI.WebAPI
@@ -8,16 +6,15 @@ namespace DataPlatformSI.WebAPI
     /// <summary>
     /// Provides unbound, utility functions.
     /// </summary>
-    public class FunctionsController : ODataController
+    public class FunctionsController : Controller
     {
         /// <summary>
         /// Gets the sales tax for a postal code.
         /// </summary>
         /// <param name="state">The state's short name to get the sales tax for.</param>
         /// <returns>The sales tax rate for the postal code.</returns>
-        [HttpGet]
-        [ODataRoute("GetSalesTaxRate(state={state})")]
-        public IActionResult GetSalesTaxRate([FromODataUri] string state)
+        [HttpGet("[action]")]
+        public IActionResult GetSalesTaxRate(string state)
         {
             return Ok(GetRate(state));
         }

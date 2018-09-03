@@ -3,8 +3,6 @@ using DataPlatformSI.DomainClasses;
 using DataPlatformSI.Common;
 using DataPlatformSI.Services;
 using DataPlatformSI.WebAPI.Models;
-using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
@@ -23,9 +21,9 @@ using Newtonsoft.Json.Linq;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
+    [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
-    [ODataRoutePrefix("Account")]
-    public class AccountController : ODataController
+    public class AccountController : Controller
     {
         private readonly IUsersService _usersService;
         private readonly ITokenStoreService _tokenStoreService;
@@ -51,16 +49,10 @@ namespace DataPlatformSI.WebAPI.Controllers
             _antiforgery.CheckArgumentIsNull(nameof(antiforgery));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="loginUser"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
-        [HttpPost]
-        [ODataRoute("Login")]
-        public async Task<IActionResult> Login([FromBody] User loginUser)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Login([FromBody]  User loginUser)
         {
             if (loginUser == null)
             {
@@ -81,8 +73,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        [ODataRoute("RefreshToken")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> RefreshToken([FromBody]JToken jsonBody)
         {
             var refreshToken = jsonBody.Value<string>("refreshToken");
@@ -104,16 +95,9 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Ok(new { access_token = accessToken, refresh_token = newRefreshToken });
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="refreshToken"></param>
-        /// <returns></returns>
-        /// http://localhost:5000/api/Account/Logout(refreshToken='232323')
         [AllowAnonymous]
-        [HttpGet]
-        [ODataRoute("Logout(refreshToken={refreshToken})")]
-        public async Task<bool> Logout([FromODataUri]string refreshToken)
+        [HttpGet("[action]")]
+        public async Task<bool> Logout(string refreshToken)
         {
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
             var userIdValue = claimsIdentity.FindFirst(ClaimTypes.UserData)?.Value;
@@ -128,30 +112,17 @@ namespace DataPlatformSI.WebAPI.Controllers
             return true;
         }
 
-        [HttpGet,HttpPost]
-        [ODataRoute("IsAuthenticated")]
+        [HttpGet("[action]"), HttpPost("[action]")]
         public bool IsAuthenticated()
         {
             return User.Identity.IsAuthenticated;
         }
 
-        [HttpGet, HttpPost]
-        [ODataRoute("GetUserInfo")]
+        [HttpGet("[action]"), HttpPost("[action]")]
         public IActionResult GetUserInfo()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            return Ok(new { Username = claimsIdentity.Name });
+            return Json(new { Username = claimsIdentity.Name });
         }
-    }
-
-    public class LoginDto
-    {
-        [Required]
-        public string Username { get; set; }
-
-        [Required]
-        public string Password { get; set; }
-
-        public bool RememberMe { get; set; }
     }
 }

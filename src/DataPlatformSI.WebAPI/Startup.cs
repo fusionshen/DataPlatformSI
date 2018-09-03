@@ -10,9 +10,6 @@ using DataPlatformSI.DataLayer.Context;
 using DataPlatformSI.DomainClasses;
 using DataPlatformSI.Services;
 using DataPlatformSI.WebAPI.Models;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -28,7 +25,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using Microsoft.OData.Edm;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -146,8 +142,9 @@ namespace DataPlatformSI.WebAPI
             {
                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddOData();
+            #region OData
+            //services.AddOData();
+            #endregion
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
@@ -257,8 +254,9 @@ namespace DataPlatformSI.WebAPI
                 loggerFactory.AddConsole(Configuration.GetSection("Logging"));
                 loggerFactory.AddDebug();
 
-                //app.UseBrowserLink();
-                //app.UseDatabaseErrorPage(); mvc中的数据库报错页面，可初始化
+                app.UseBrowserLink();
+                //mvc中的数据库报错页面，可初始化
+                app.UseDatabaseErrorPage(); 
             }
             else
             {
@@ -308,19 +306,22 @@ namespace DataPlatformSI.WebAPI
                 dbInitializer.SeedData();
             }
 
-            //app.UseStatusCodePages();
-            //app.UseDefaultFiles(); // so index.html is not required
-            //app.UseStaticFiles();
+            app.UseStatusCodePages();
+            app.UseDefaultFiles(); // so index.html is not required
+            app.UseStaticFiles();
 
             app.UseMvc(routeBuilder =>
             {
                 //var models = modelBuilder.GetEdmModels();
                 //routeBuilder.MapVersionedODataRoutes("odata", "api", models);
                 //routeBuilder.MapVersionedODataRoutes("odata-bypath", "v{version:apiVersion}", models);
-                routeBuilder.MapODataServiceRoute("odata", "api", GetEdmModel());
+                //routeBuilder.MapODataServiceRoute("odata", "api", GetEdmModel());
+                routeBuilder.MapRoute(
+                   name: "default",
+                   template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-             // catch-all handler for HTML5 client routes - serve index.html
+            // catch-all handler for HTML5 client routes - serve index.html
             //app.Run(async context =>
             //{
             //    context.Response.ContentType = "text/html";
@@ -340,58 +341,59 @@ namespace DataPlatformSI.WebAPI
                 });
         }
 
+        #region EDM
         // Builds the EDM model for the OData service, including the OData action definitions.
-        private static IEdmModel GetEdmModel()
-        {
-            ODataModelBuilder builder = new ODataConventionModelBuilder();
+        //private static IEdmModel GetEdmModel()
+        //{
+        //    ODataModelBuilder builder = new ODataConventionModelBuilder();
 
-            builder.EntitySet<User>("Account");
+        //    builder.EntitySet<User>("Account");
 
-            var userType = builder.EntityType<User>();
+        //    var userType = builder.EntityType<User>();
 
-            // Function bound to a collection
-            // Returns the most expensive product, a single entity
-            userType.Collection
-                .Function("Login")
-                .Returns<object>();
+        //    // Function bound to a collection
+        //    // Returns the most expensive product, a single entity
+        //    userType.Collection
+        //        .Function("Login")
+        //        .Returns<object>();
 
-            // Function bound to a collection
-            // Returns the top 10 product, a collection
-            userType.Collection
-                .Function("RefreshToken")
-                .Returns<object>();
+        //    // Function bound to a collection
+        //    // Returns the top 10 product, a collection
+        //    userType.Collection
+        //        .Function("RefreshToken")
+        //        .Returns<object>();
 
-            // Function bound to a single entity
-            // Returns the instance's price rank among all products
-            userType.Collection
-                .Function("Logout")
-                .Returns<bool>().Parameter<string>("refreshToken");
+        //    // Function bound to a single entity
+        //    // Returns the instance's price rank among all products
+        //    userType.Collection
+        //        .Function("Logout")
+        //        .Returns<bool>().Parameter<string>("refreshToken");
 
-            userType.Collection
-                .Function("IsAuthenticated")
-                .Returns<bool>();
+        //    userType.Collection
+        //        .Function("IsAuthenticated")
+        //        .Returns<bool>();
 
-            userType.Collection
-                .Function("GetUserInfo")
-                .Returns<object>();
+        //    userType.Collection
+        //        .Function("GetUserInfo")
+        //        .Returns<object>();
 
-            // Function bound to a single entity
-            // Accept a string as parameter and return a double
-            // This function calculate the general sales tax base on the
-            // state
-            //userType
-            //    .Function("CalculateGeneralSalesTax")
-            //    .Returns<double>()
-            //    .Parameter<string>("state");
+        //    // Function bound to a single entity
+        //    // Accept a string as parameter and return a double
+        //    // This function calculate the general sales tax base on the
+        //    // state
+        //    //userType
+        //    //    .Function("CalculateGeneralSalesTax")
+        //    //    .Returns<double>()
+        //    //    .Parameter<string>("state");
 
-            // Unbound Function
-            builder.Function("GetSalesTaxRate")
-                .Returns<double>()
-                .Parameter<string>("state");
+        //    // Unbound Function
+        //    builder.Function("GetSalesTaxRate")
+        //        .Returns<double>()
+        //        .Parameter<string>("state");
 
-            return builder.GetEdmModel();
-        }
-
+        //    return builder.GetEdmModel();
+        //}
+        #endregion
 
         static string XmlCommentsFilePath
         {
