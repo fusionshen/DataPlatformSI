@@ -122,7 +122,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         public IActionResult GetUserInfo()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            return Json(new { Username = claimsIdentity.Name });
+            return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1 } });
         }
     }
 }
