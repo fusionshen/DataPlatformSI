@@ -15,7 +15,7 @@ namespace DataPlatformSI.WebAPI.Controllers
     {
         ModuleMetadata[] modules = new ModuleMetadata[]
         {
-            new ModuleMetadata { Id = 1, ModuleName = "Basic",Checksum ="82240e32a858fbfe5e77b0c920b68e2c", ModuleType="DataPlatformRI.Modules.Basic.BasicModule, DataPlatformRI.Modules.Basic, Version=1.0.0.0, PublicKeyToken=null" }
+            new ModuleMetadata { Id = 1, ModuleName = "BasicModule",Checksum ="82240e32a858fbfe5e77b0c920b68e2c", ModuleType="DataPlatformRI.Modules.Basic.BasicModule, DataPlatformRI.Modules.Basic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" }
         };
 
         // GET: api/Modules
