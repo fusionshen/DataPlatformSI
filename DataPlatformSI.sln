@@ -5,15 +5,13 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.WebAPI", "src\DataPlatformSI.WebAPI\DataPlatformSI.WebAPI.csproj", "{1A97E5EB-7BFB-470A-BDA4-A5EF74261F7D}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "src\docker-compose.dcproj", "{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.Services", "src\DataPlatformSI.Services\DataPlatformSI.Services.csproj", "{FD76B419-BE19-4EC8-95F7-0BBAED19F5A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPlatformSI.Services", "src\DataPlatformSI.Services\DataPlatformSI.Services.csproj", "{FD76B419-BE19-4EC8-95F7-0BBAED19F5A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.Common", "src\DataPlatformSI.Common\DataPlatformSI.Common.csproj", "{AE8AA4E5-6019-4762-9AA3-6134C55C9366}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPlatformSI.Common", "src\DataPlatformSI.Common\DataPlatformSI.Common.csproj", "{AE8AA4E5-6019-4762-9AA3-6134C55C9366}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.DataLayer", "src\DataPlatformSI.DataLayer\DataPlatformSI.DataLayer.csproj", "{B767C47C-5C04-4FB8-9850-B360514A5F60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPlatformSI.DataLayer", "src\DataPlatformSI.DataLayer\DataPlatformSI.DataLayer.csproj", "{B767C47C-5C04-4FB8-9850-B360514A5F60}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPlatformSI.DomainClasses", "src\DataPlatformSI.DomainClasses\DataPlatformSI.DomainClasses.csproj", "{26828531-1DCC-40EB-8CF3-D5B2D415E9F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.DomainClasses", "src\DataPlatformSI.DomainClasses\DataPlatformSI.DomainClasses.csproj", "{26828531-1DCC-40EB-8CF3-D5B2D415E9F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{1A97E5EB-7BFB-470A-BDA4-A5EF74261F7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A97E5EB-7BFB-470A-BDA4-A5EF74261F7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A97E5EB-7BFB-470A-BDA4-A5EF74261F7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FD76B419-BE19-4EC8-95F7-0BBAED19F5A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FD76B419-BE19-4EC8-95F7-0BBAED19F5A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD76B419-BE19-4EC8-95F7-0BBAED19F5A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
