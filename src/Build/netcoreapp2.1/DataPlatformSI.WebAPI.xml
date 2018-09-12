@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataPlatformSI.WebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.ModulesController.GetContentById(System.Int32)">
+            <summary>
+            下载dll
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DataPlatformSI.WebAPI.FunctionsController">
+            <summary>
+            Provides unbound, utility functions.
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.FunctionsController.GetSalesTaxRate(System.String)">
+            <summary>
+            Gets the sales tax for a postal code.
+            </summary>
+            <param name="state">The state's short name to get the sales tax for.</param>
+            <returns>The sales tax rate for the postal code.</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Configures the application using the provided builder, hosting environment, and logging factory.
+            </summary>
+            <param name="app">The current application builder.</param>
+            <param name="env">The current hosting environment.</param>
+            <param name="loggerFactory"></param>
+        </member>
+    </members>
+</doc>

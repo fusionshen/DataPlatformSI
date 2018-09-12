@@ -8,8 +8,9 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.1\DataPlatformSI.WebAPI.xml</DocumentationFile>
+    <DocumentationFile>..\Build\netcoreapp2.1\DataPlatformSI.WebAPI.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
+    <OutputPath>..\Build\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
