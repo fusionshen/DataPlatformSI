@@ -4,14 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DataPlatformSI.DomainClasses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
-    //[EnableCors("CorsPolicy")]
+    [EnableCors("CorsPolicy")]
     public class ModulesController : Controller
     {
         private readonly string _moduleDirectory = $"{System.AppContext.BaseDirectory}/Downloads/Modules";
