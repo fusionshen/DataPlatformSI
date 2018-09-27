@@ -31,7 +31,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
 
         // GET: api/Modules/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
             var module = modules.FirstOrDefault((m) => m.Id == id);

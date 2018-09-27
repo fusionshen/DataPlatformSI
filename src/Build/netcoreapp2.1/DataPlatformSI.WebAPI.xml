@@ -4,6 +4,13 @@
         <name>DataPlatformSI.WebAPI</name>
     </assembly>
     <members>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetContentById(System.Int32)">
+            <summary>
+            下载jsonschema
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.ModulesController.GetContentById(System.Int32)">
             <summary>
             下载dll
