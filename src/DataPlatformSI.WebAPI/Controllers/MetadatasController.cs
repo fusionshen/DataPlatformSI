@@ -87,19 +87,19 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
 
         /// <summary>
-        /// 下载jsonschema
+        /// 下载JsonSchema
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        //Get: api/Metadatas/1/Content
-        [HttpGet("{id}/Content")]
-        public IActionResult GetContentById(int id)
+        //Get: api/Metadatas/1/jsContent
+        [HttpGet("{id}/jscontent")]
+        public IActionResult GetJsonSchemaContentById(int id)
         {
             if (metadatas.FirstOrDefault(m => m.Id == id) == null)
             {
                 return NotFound();
             }
-            var addrUrl = $"{_schemaDirectory}/{GetFileNameFromItemName(metadatas.FirstOrDefault(m => m.Id == id).Name)}";
+            var addrUrl = $"{_schemaDirectory}/{GetJsonSchemaFileNameFromItemName(metadatas.FirstOrDefault(m => m.Id == id).Name)}";
             if (!System.IO.File.Exists(addrUrl))
             {
                 return NotFound();
@@ -109,6 +109,32 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Ok(stream);
         }
 
-        private string GetFileNameFromItemName(string name) => $"{name.Split(new[] { ',', ' ','_' }, StringSplitOptions.RemoveEmptyEntries)[1]}.schema.json";
+        private string GetJsonSchemaFileNameFromItemName(string name) => $"{name.Split(new[] { ',', ' ','_' }, StringSplitOptions.RemoveEmptyEntries)[1]}.schema.json";
+
+        /// <summary>
+        /// 下载UiSchema
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        //Get: api/Metadatas/1/uisContent
+        [HttpGet("{id}/uiscontent")]
+        public IActionResult GetUiSchemaContentById(int id)
+        {
+            if (metadatas.FirstOrDefault(m => m.Id == id) == null)
+            {
+                return NotFound();
+            }
+            var addrUrl = $"{_schemaDirectory}/{GetUiSchemaFileNameFromItemName(metadatas.FirstOrDefault(m => m.Id == id).Name)}";
+            if (!System.IO.File.Exists(addrUrl))
+            {
+                //return NotFound();
+                addrUrl = $"{_schemaDirectory}/__nullable__.uischema.json";
+            }
+            var stream = System.IO.File.OpenRead(addrUrl);
+            //return File(stream, "application/vnd.android.package-archive", Path.GetFileName(addrUrl));
+            return Ok(stream);
+        }
+
+        private string GetUiSchemaFileNameFromItemName(string name) => $"{name.Split(new[] { ',', ' ', '_' }, StringSplitOptions.RemoveEmptyEntries)[1]}.uischema.json";
     }
 }

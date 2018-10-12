@@ -1,0 +1,78 @@
+{
+  "unidirectional": {
+    "credit_card": {
+      "ui:help": {
+        "type": "p",
+        "key": null,
+        "ref": null,
+        "props": {
+          "children": [
+            "If you enter anything here then ",
+            {
+              "type": "code",
+              "key": null,
+              "ref": null,
+              "props": {
+                "children": "billing_address"
+              },
+              "_owner": null
+            },
+            " will become required."
+          ]
+        },
+        "_owner": null
+      }
+    },
+    "billing_address": {
+      "ui:help": "It’s okay to have a billing address without a credit card number."
+    }
+  },
+  "bidirectional": {
+    "credit_card": {
+      "ui:help": {
+        "type": "p",
+        "key": null,
+        "ref": null,
+        "props": {
+          "children": [
+            "\"If you enter anything here then ",
+            {
+              "type": "code",
+              "key": null,
+              "ref": null,
+              "props": {
+                "children": "billing_address"
+              },
+              "_owner": null
+            },
+            " will become required."
+          ]
+        },
+        "_owner": null
+      }
+    },
+    "billing_address": {
+      "ui:help": {
+        "type": "p",
+        "key": null,
+        "ref": null,
+        "props": {
+          "children": [
+            "If you enter anything here then ",
+            {
+              "type": "code",
+              "key": null,
+              "ref": null,
+              "props": {
+                "children": "credit_card"
+              },
+              "_owner": null
+            },
+            " will become required."
+          ]
+        },
+        "_owner": null
+      }
+    }
+  }
+}

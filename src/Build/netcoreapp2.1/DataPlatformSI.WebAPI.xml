@@ -4,9 +4,16 @@
         <name>DataPlatformSI.WebAPI</name>
     </assembly>
     <members>
-        <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetContentById(System.Int32)">
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetJsonSchemaContentById(System.Int32)">
             <summary>
-            下载jsonschema
+            下载JsonSchema
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetUiSchemaContentById(System.Int32)">
+            <summary>
+            下载UiSchema
             </summary>
             <param name="id"></param>
             <returns></returns>
