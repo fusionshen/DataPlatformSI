@@ -1,5 +1,7 @@
 {
-  "choice1": {
-    "ui:placeholder": "Choose one"
+  "properties":{
+    "choice1": {
+      "ui:placeholder": "Choose one"
+    }
   }
 }

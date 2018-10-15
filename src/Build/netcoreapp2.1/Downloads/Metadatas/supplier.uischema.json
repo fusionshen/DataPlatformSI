@@ -1,7 +1,9 @@
 {
-  "ui:order": [
-    "shipping_address",
-    "billing_address",
-    "tree"
-  ]
+  "properties":{
+    "ui:order": [
+      "shipping_address",
+      "billing_address",
+      "tree"
+    ]
+  }
 }

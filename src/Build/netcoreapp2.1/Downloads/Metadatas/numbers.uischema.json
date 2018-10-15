@@ -1,17 +1,19 @@
 {
-  "integer": {
-    "ui:widget": "updown"
-  },
-  "numberEnumRadio": {
-    "ui:widget": "radio",
-    "ui:options": {
-      "inline": true
+  "properties":{
+    "integer": {
+      "ui:widget": "updown"
+    },
+    "numberEnumRadio": {
+      "ui:widget": "radio",
+      "ui:options": {
+        "inline": true
+      }
+    },
+    "integerRange": {
+      "ui:widget": "range"
+    },
+    "integerRangeSteps": {
+      "ui:widget": "range"
     }
-  },
-  "integerRange": {
-    "ui:widget": "range"
-  },
-  "integerRangeSteps": {
-    "ui:widget": "range"
   }
 }

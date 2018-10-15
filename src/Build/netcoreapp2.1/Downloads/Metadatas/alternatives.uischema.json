@@ -1,7 +1,9 @@
 {
-  "blendMode": {
-    "ui:enumDisabled": [
-      "multiply"
-    ]
+  "properties":{
+    "blendMode": {
+      "ui:enumDisabled": [
+        "multiply"
+      ]
+    }
   }
 }

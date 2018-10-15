@@ -1,47 +1,49 @@
 {
-  "listOfStrings": {
-    "items": {
-      "ui:emptyValue": ""
-    }
-  },
-  "multipleChoicesList": {
-    "ui:widget": "checkboxes"
-  },
-  "fixedItemsList": {
-    "items": [
-      {
-        "ui:widget": "textarea"
-      },
-      {
-        "ui:widget": "select"
+  "properties":{
+    "listOfStrings": {
+      "items": {
+        "ui:emptyValue": ""
       }
-    ],
-    "additionalItems": {
-      "ui:widget": "updown"
+    },
+    "multipleChoicesList": {
+      "ui:widget": "checkboxes"
+    },
+    "fixedItemsList": {
+      "items": [
+        {
+          "ui:widget": "textarea"
+        },
+        {
+          "ui:widget": "select"
+        }
+      ],
+      "additionalItems": {
+        "ui:widget": "updown"
+      }
+    },
+    "unorderable": {
+      "ui:options": {
+        "orderable": false
+      }
+    },
+    "unremovable": {
+      "ui:options": {
+        "removable": false
+      }
+    },
+    "noToolbar": {
+      "ui:options": {
+        "addable": false,
+        "orderable": false,
+        "removable": false
+      }
+    },
+    "fixedNoToolbar": {
+      "ui:options": {
+        "addable": false,
+        "orderable": false,
+        "removable": false
+      }
     }
-  },
-  "unorderable": {
-    "ui:options": {
-      "orderable": false
     }
-  },
-  "unremovable": {
-    "ui:options": {
-      "removable": false
-    }
-  },
-  "noToolbar": {
-    "ui:options": {
-      "addable": false,
-      "orderable": false,
-      "removable": false
-    }
-  },
-  "fixedNoToolbar": {
-    "ui:options": {
-      "addable": false,
-      "orderable": false,
-      "removable": false
-    }
-  }
 }

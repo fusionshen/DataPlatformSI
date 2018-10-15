@@ -1,4 +1,6 @@
 {
-  "title": "A single-field form",
-  "type": "string"
+  "properties":{
+    "title": "A single-field form",
+    "type": "string"
+  }
 }

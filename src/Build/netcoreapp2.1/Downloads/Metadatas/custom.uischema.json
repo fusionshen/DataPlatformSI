@@ -1,3 +1,5 @@
 {
-  "ui:field": "geo"
+  "properties": {
+    "ui:field": "geo"
+  }
 }
