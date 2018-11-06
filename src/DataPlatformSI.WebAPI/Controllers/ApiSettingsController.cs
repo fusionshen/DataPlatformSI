@@ -3,11 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using DataPlatformSI.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using DataPlatformSI.Common.GuardToolkit;
+using DataPlatformSI.ViewModels.Identity.Settings;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {

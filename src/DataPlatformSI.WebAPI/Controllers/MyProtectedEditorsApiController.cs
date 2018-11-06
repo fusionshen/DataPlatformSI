@@ -12,7 +12,7 @@ namespace DataPlatformSI.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
-    [Authorize(Policy = CustomRoles.Editor)]
+    //[Authorize(Policy = CustomRoles.Editor)]
     public class MyProtectedEditorsApiController : Controller
     {
         [HttpGet]

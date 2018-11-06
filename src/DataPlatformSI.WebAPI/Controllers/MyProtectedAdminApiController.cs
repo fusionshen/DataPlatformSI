@@ -3,26 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataPlatformSI.Services;
-using DataPlatformSI.Common;
+using DataPlatformSI.Common.GuardToolkit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using DataPlatformSI.Services.Contracts.Identity;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
-    [Authorize(Policy = CustomRoles.Admin)]
+    //[Authorize(Policy = CustomRoles.Admin)]
     public class MyProtectedAdminApiController : Controller
     {
-        private readonly IUsersService _usersService;
+        private readonly IApplicationUserManager _userManager;
 
-        public MyProtectedAdminApiController(IUsersService usersService)
+        public MyProtectedAdminApiController(IApplicationUserManager userManager)
         {
-            _usersService = usersService;
-            _usersService.CheckArgumentIsNull(nameof(usersService));
+            _userManager = userManager;
+            _userManager.CheckArgumentIsNull(nameof(userManager));
         }
 
         [HttpGet]
@@ -38,7 +39,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 Title = "Hello from My Protected Admin Api Controller! [Authorize(Policy = CustomRoles.Admin)]",
                 Username = this.User.Identity.Name,
                 UserData = userId,
-                TokenSerialNumber = await _usersService.GetSerialNumberAsync(int.Parse(userId)),
+                TokenSerialNumber = await _userManager.GetSerialNumberAsync(int.Parse(userId)),
                 Roles = claimsIdentity.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList()
             });
         }

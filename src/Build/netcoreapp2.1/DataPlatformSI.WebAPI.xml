@@ -37,7 +37,7 @@
             <param name="state">The state's short name to get the sales tax for.</param>
             <returns>The sales tax rate for the postal code.</returns>
         </member>
-        <member name="M:DataPlatformSI.WebAPI.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.Extensions.Logging.ILoggerFactory)">
+        <member name="M:DataPlatformSI.WebAPI.Startup.Configure(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
             <summary>
             Configures the application using the provided builder, hosting environment, and logging factory.
             </summary>

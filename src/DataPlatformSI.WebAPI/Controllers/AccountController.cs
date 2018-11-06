@@ -1,23 +1,17 @@
 ﻿using DataPlatformSI.DataLayer.Context;
-using DataPlatformSI.DomainClasses;
-using DataPlatformSI.Common;
+using DataPlatformSI.Common.GuardToolkit;
 using DataPlatformSI.Services;
-using DataPlatformSI.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using DataPlatformSI.Services.Identity;
+using DataPlatformSI.Services.Contracts.Identity;
+using DataPlatformSI.Entities.Identity;
+using DataPlatformSI.ViewModels.Identity;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
@@ -25,19 +19,24 @@ namespace DataPlatformSI.WebAPI.Controllers
     [EnableCors("CorsPolicy")]
     public class AccountController : Controller
     {
-        private readonly IUsersService _usersService;
+        private readonly IApplicationUserManager _userManager;
+        private readonly IApplicationSignInManager _signInManager;
         private readonly ITokenStoreService _tokenStoreService;
         private readonly IUnitOfWork _uow;
         private readonly IAntiForgeryCookieService _antiforgery;
 
         public AccountController(
-            IUsersService usersService,
+            IApplicationUserManager userManager,
+            IApplicationSignInManager signInManager,
             ITokenStoreService tokenStoreService,
             IUnitOfWork uow,
             IAntiForgeryCookieService antiforgery)
         {
-            _usersService = usersService;
-            _usersService.CheckArgumentIsNull(nameof(usersService));
+            _userManager = userManager;
+            _userManager.CheckArgumentIsNull(nameof(userManager));
+
+            _signInManager = signInManager;
+            _signInManager.CheckArgumentIsNull(nameof(signInManager));
 
             _tokenStoreService = tokenStoreService;
             _tokenStoreService.CheckArgumentIsNull(nameof(tokenStoreService));
@@ -52,18 +51,58 @@ namespace DataPlatformSI.WebAPI.Controllers
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Login([FromBody]  User loginUser)
+        public async Task<IActionResult> Login([FromBody]  LoginViewModel loginUser)
         {
             if (loginUser == null)
             {
                 return BadRequest("user is not set.");
             }
 
-            var user = await _usersService.FindUserAsync(loginUser.Username, loginUser.Password);
-            if (user == null || !user.IsActive)
+            var user = await _userManager.FindByNameAsync(loginUser.Username);
+            if (user == null)
             {
                 return Unauthorized();
             }
+
+            if (!user.IsActive)
+            {
+                return Unauthorized();
+            }
+
+            //if (_siteOptions.Value.EnableEmailConfirmation &&
+            //    !await _userManager.IsEmailConfirmedAsync(user))
+            //{
+            //}
+
+            var result = await _signInManager.PasswordSignInAsync(
+                                    loginUser.Username,
+                                    loginUser.Password,
+                                    loginUser.RememberMe,
+                                    lockoutOnFailure: true);
+
+            if (result.RequiresTwoFactor)
+            {
+                //return RedirectToAction(
+                //    nameof(TwoFactorController.SendCode),
+                //    "TwoFactor",
+                //    new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+            }
+
+            if (result.IsLockedOut)
+            {
+
+            }
+
+            if (result.IsNotAllowed)
+            {
+
+            }
+
+            //var user = await _userManager.FindUserAsync(loginUser.Username, loginUser.Password);
+            //if (user == null || !user.IsActive)
+            //{
+            //    return Unauthorized();
+            //}
 
             var (accessToken, refreshToken, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
 
@@ -122,7 +161,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         public IActionResult GetUserInfo()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1 }, Roles = new List<string> { CustomRoles.Admin } });
+            return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1 }, Roles = new List<string> { ConstantRoles.Admin } });
         }
     }
 }
