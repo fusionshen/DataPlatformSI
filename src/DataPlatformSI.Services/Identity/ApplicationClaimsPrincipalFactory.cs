@@ -42,11 +42,11 @@ namespace DataPlatformSI.Services.Identity
         public override async Task<ClaimsPrincipal> CreateAsync(User user)
         {
             var principal = await base.CreateAsync(user); // adds all `Options.ClaimsIdentity.RoleClaimType -> Role Claims` automatically + `Options.ClaimsIdentity.UserIdClaimType -> userId` & `Options.ClaimsIdentity.UserNameClaimType -> userName`
-            addCustomClaims(user, principal);
+            AddCustomClaims(user, principal);
             return principal;
         }
 
-        private static void addCustomClaims(User user, IPrincipal principal)
+        private static void AddCustomClaims(User user, IPrincipal principal)
         {
             ((ClaimsIdentity)principal.Identity).AddClaims(new[]
             {

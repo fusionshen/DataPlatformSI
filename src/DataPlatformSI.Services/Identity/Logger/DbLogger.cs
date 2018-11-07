@@ -78,11 +78,11 @@ namespace DataPlatformSI.Services.Identity.Logger
                 Logger = _loggerName,
                 Message = message
             };
-            setStateJson(state, appLogItem);
-            saveLogItem(appLogItem);
+            SetStateJson(state, appLogItem);
+            SaveLogItem(appLogItem);
         }
 
-        private static void setStateJson<TState>(TState state, AppLogItem appLogItem)
+        private static void SetStateJson<TState>(TState state, AppLogItem appLogItem)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace DataPlatformSI.Services.Identity.Logger
             }
         }
 
-        private void saveLogItem(AppLogItem appLogItem)
+        private void SaveLogItem(AppLogItem appLogItem)
         {
             try
             {

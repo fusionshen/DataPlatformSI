@@ -21,14 +21,14 @@ namespace DataPlatformSI.Services.Identity
         private readonly ISecurityService _securityService;
         private readonly IUnitOfWork _uow;
         private readonly DbSet<UserToken> _tokens;
-        private readonly IOptionsSnapshot<BearerTokensOptions> _configuration;
+        private readonly IOptionsSnapshot<SiteSettings> _configuration;
         private readonly IApplicationRoleManager _rolesService;
 
         public TokenStoreService(
             IUnitOfWork uow,
             ISecurityService securityService,
             IApplicationRoleManager rolesService,
-            IOptionsSnapshot<BearerTokensOptions> configuration)
+            IOptionsSnapshot<SiteSettings> configuration)
         {
             _uow = uow;
             _uow.CheckArgumentIsNull(nameof(_uow));
@@ -47,7 +47,7 @@ namespace DataPlatformSI.Services.Identity
 
         public async Task AddUserTokenAsync(UserToken userToken)
         {
-            if (!_configuration.Value.AllowMultipleLoginsFromTheSameUser)
+            if (!_configuration.Value.BearerTokens.AllowMultipleLoginsFromTheSameUser)
             {
                 await InvalidateUserTokensAsync(userToken.UserId);
             }
@@ -66,8 +66,10 @@ namespace DataPlatformSI.Services.Identity
                 RefreshTokenIdHashSource = string.IsNullOrWhiteSpace(refreshTokenSource) ?
                                            null : _securityService.GetSha256Hash(refreshTokenSource),
                 AccessTokenHash = _securityService.GetSha256Hash(accessToken),
-                RefreshTokenExpiresDateTime = now.AddMinutes(_configuration.Value.RefreshTokenExpirationMinutes),
-                AccessTokenExpiresDateTime = now.AddMinutes(_configuration.Value.AccessTokenExpirationMinutes)
+                RefreshTokenExpiresDateTime = now.AddMinutes(_configuration.Value.BearerTokens.RefreshTokenExpirationMinutes),
+                AccessTokenExpiresDateTime = now.AddMinutes(_configuration.Value.BearerTokens.AccessTokenExpirationMinutes),
+                LoginProvider = "wpf client",
+                Name = "some words"
             };
             await AddUserTokenAsync(token);
         }
@@ -108,7 +110,7 @@ namespace DataPlatformSI.Services.Identity
         {
             if (!string.IsNullOrWhiteSpace(userIdValue) && int.TryParse(userIdValue, out int userId))
             {
-                if (_configuration.Value.AllowSignoutAllUserActiveClients)
+                if (_configuration.Value.BearerTokens.AllowSignoutAllUserActiveClients)
                 {
                     await InvalidateUserTokensAsync(userId);
                 }
@@ -165,36 +167,36 @@ namespace DataPlatformSI.Services.Identity
             var claims = new List<Claim>
             {
                 // Unique Id for all Jwt tokes
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString(), ClaimValueTypes.String, _configuration.Value.Issuer),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString(), ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
                 // Issuer
-                new Claim(JwtRegisteredClaimNames.Iss, _configuration.Value.Issuer, ClaimValueTypes.String, _configuration.Value.Issuer),
+                new Claim(JwtRegisteredClaimNames.Iss, _configuration.Value.BearerTokens.Issuer, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
                 // Issued at
-                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64, _configuration.Value.Issuer),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(), ClaimValueTypes.String, _configuration.Value.Issuer),
-                new Claim(ClaimTypes.Name, user.UserName, ClaimValueTypes.String, _configuration.Value.Issuer),
-                new Claim("DisplayName", user.DisplayName, ClaimValueTypes.String, _configuration.Value.Issuer),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64, _configuration.Value.BearerTokens.Issuer),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(), ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
+                new Claim(ClaimTypes.Name, user.UserName, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
+                new Claim("DisplayName", user.DisplayName, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
                 // to invalidate the cookie
-                new Claim(ClaimTypes.SerialNumber, user.SerialNumber, ClaimValueTypes.String, _configuration.Value.Issuer),
+                new Claim(ClaimTypes.SerialNumber, user.SerialNumber, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
                 // custom data
-                new Claim(ClaimTypes.UserData, user.Id.ToString(), ClaimValueTypes.String, _configuration.Value.Issuer)
+                new Claim(ClaimTypes.UserData, user.Id.ToString(), ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer)
             };
 
             // add roles
             var roles = await _rolesService.FindUserRolesAsync(user.Id);
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role.Name, ClaimValueTypes.String, _configuration.Value.Issuer));
+                claims.Add(new Claim(ClaimTypes.Role, role.Name, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer));
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Value.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Value.BearerTokens.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var now = DateTime.UtcNow;
             var token = new JwtSecurityToken(
-                issuer: _configuration.Value.Issuer,
-                audience: _configuration.Value.Audience,
+                issuer: _configuration.Value.BearerTokens.Issuer,
+                audience: _configuration.Value.BearerTokens.Audience,
                 claims: claims,
                 notBefore: now,
-                expires: now.AddMinutes(_configuration.Value.AccessTokenExpirationMinutes),
+                expires: now.AddMinutes(_configuration.Value.BearerTokens.AccessTokenExpirationMinutes),
                 signingCredentials: creds);
             return (new JwtSecurityTokenHandler().WriteToken(token), claims);
         }
