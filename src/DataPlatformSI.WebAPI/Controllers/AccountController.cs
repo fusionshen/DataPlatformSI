@@ -79,6 +79,20 @@ namespace DataPlatformSI.WebAPI.Controllers
                                     loginUser.Password,
                                     loginUser.RememberMe,
                                     lockoutOnFailure: true);
+            if (result.Succeeded)
+            {
+                //var user = await _userManager.FindUserAsync(loginUser.Username, loginUser.Password);
+                //if (user == null || !user.IsActive)
+                //{
+                //    return Unauthorized();
+                //}
+
+                var (accessToken, refreshToken, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
+
+                _antiforgery.RegenerateAntiForgeryCookies(claims);
+
+                return Ok(new { access_token = accessToken, refresh_token = refreshToken });
+            }
 
             if (result.RequiresTwoFactor)
             {
@@ -98,17 +112,7 @@ namespace DataPlatformSI.WebAPI.Controllers
 
             }
 
-            //var user = await _userManager.FindUserAsync(loginUser.Username, loginUser.Password);
-            //if (user == null || !user.IsActive)
-            //{
-            //    return Unauthorized();
-            //}
-
-            var (accessToken, refreshToken, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
-
-            _antiforgery.RegenerateAntiForgeryCookies(claims);
-
-            return Ok(new { access_token = accessToken, refresh_token = refreshToken });
+            return Unauthorized();
         }
 
         [AllowAnonymous]
