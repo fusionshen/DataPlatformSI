@@ -4,8 +4,8 @@ using DataPlatformSI.Common.GuardToolkit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using DataPlatformSI.WebAPI.Models;
 using DataPlatformSI.Services.Contracts.Identity;
+using DataPlatformSI.ViewModels.Identity;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {

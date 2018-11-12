@@ -12,6 +12,8 @@ using DataPlatformSI.Services.Identity;
 using DataPlatformSI.Services.Contracts.Identity;
 using DataPlatformSI.Entities.Identity;
 using DataPlatformSI.ViewModels.Identity;
+using System.ComponentModel;
+using DataPlatformSI.Services.Authorization;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
@@ -81,12 +83,6 @@ namespace DataPlatformSI.WebAPI.Controllers
                                     lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                //var user = await _userManager.FindUserAsync(loginUser.Username, loginUser.Password);
-                //if (user == null || !user.IsActive)
-                //{
-                //    return Unauthorized();
-                //}
-
                 var (accessToken, refreshToken, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
 
                 _antiforgery.RegenerateAntiForgeryCookies(claims);
@@ -96,10 +92,7 @@ namespace DataPlatformSI.WebAPI.Controllers
 
             if (result.RequiresTwoFactor)
             {
-                //return RedirectToAction(
-                //    nameof(TwoFactorController.SendCode),
-                //    "TwoFactor",
-                //    new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+               
             }
 
             if (result.IsLockedOut)
@@ -138,7 +131,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Ok(new { access_token = accessToken, refresh_token = newRefreshToken });
         }
 
-        [AllowAnonymous]
+        [PermissionAuthorize("account_logout")]
         [HttpGet("[action]")]
         public async Task<bool> Logout(string refreshToken)
         {
