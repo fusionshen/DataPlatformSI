@@ -432,7 +432,7 @@ namespace DataPlatformSI.Services.Identity
                 return IdentityResult.Failed(new IdentityError
                 {
                     Code = "UserNotFound",
-                    Description = "کاربر مورد نظر یافت نشد."
+                    Description = "user is not found."
                 });
             }
 
@@ -454,7 +454,7 @@ namespace DataPlatformSI.Services.Identity
                 return IdentityResult.Failed(new IdentityError
                 {
                     Code = "UserNotFound",
-                    Description = "کاربر مورد نظر یافت نشد."
+                    Description = "user is not found."
                 });
             }
 

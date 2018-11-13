@@ -4,6 +4,16 @@
         <name>DataPlatformSI.WebAPI</name>
     </assembly>
     <members>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ValidatePassword(System.String)">
+            <summary>
+            验证密码
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ChangePassword(DataPlatformSI.ViewModels.Identity.ChangePasswordViewModel)">
+            <summary>
+            更改密码
+            </summary>
+        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetJsonSchemaContentById(System.Int32)">
             <summary>
             下载JsonSchema

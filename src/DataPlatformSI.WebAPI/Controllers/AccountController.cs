@@ -1,4 +1,5 @@
 ﻿using DataPlatformSI.DataLayer.Context;
+using DataPlatformSI.Common.IdentityToolkit;
 using DataPlatformSI.Common.GuardToolkit;
 using DataPlatformSI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +15,11 @@ using DataPlatformSI.Entities.Identity;
 using DataPlatformSI.ViewModels.Identity;
 using System.ComponentModel;
 using DataPlatformSI.Services.Authorization;
+using Microsoft.AspNetCore.Identity;
+using DataPlatformSI.ViewModels.Identity.Emails;
+using System;
+using Microsoft.Extensions.Options;
+using DataPlatformSI.ViewModels.Identity.Settings;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
@@ -21,18 +27,24 @@ namespace DataPlatformSI.WebAPI.Controllers
     [EnableCors("CorsPolicy")]
     public class AccountController : Controller
     {
+        private readonly IEmailSender _emailSender;
         private readonly IApplicationUserManager _userManager;
         private readonly IApplicationSignInManager _signInManager;
+        private readonly IPasswordValidator<User> _passwordValidator;
         private readonly ITokenStoreService _tokenStoreService;
         private readonly IUnitOfWork _uow;
         private readonly IAntiForgeryCookieService _antiforgery;
+        private readonly IOptionsSnapshot<SiteSettings> _siteOptions;
 
         public AccountController(
             IApplicationUserManager userManager,
             IApplicationSignInManager signInManager,
+            IEmailSender emailSender,
+            IPasswordValidator<User> passwordValidator,
             ITokenStoreService tokenStoreService,
             IUnitOfWork uow,
-            IAntiForgeryCookieService antiforgery)
+            IAntiForgeryCookieService antiforgery,
+            IOptionsSnapshot<SiteSettings> siteOptions)
         {
             _userManager = userManager;
             _userManager.CheckArgumentIsNull(nameof(userManager));
@@ -43,11 +55,20 @@ namespace DataPlatformSI.WebAPI.Controllers
             _tokenStoreService = tokenStoreService;
             _tokenStoreService.CheckArgumentIsNull(nameof(tokenStoreService));
 
+            _passwordValidator = passwordValidator;
+            _passwordValidator.CheckArgumentIsNull(nameof(_passwordValidator));
+
+            _emailSender = emailSender;
+            _emailSender.CheckArgumentIsNull(nameof(_emailSender));
+
             _uow = uow;
             _uow.CheckArgumentIsNull(nameof(_uow));
 
             _antiforgery = antiforgery;
             _antiforgery.CheckArgumentIsNull(nameof(antiforgery));
+
+            _siteOptions = siteOptions;
+            _siteOptions.CheckArgumentIsNull(nameof(_siteOptions));
         }
 
         [AllowAnonymous]
@@ -131,7 +152,6 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Ok(new { access_token = accessToken, access_token_expire_time = accessTokenExpire, refresh_token = newRefreshToken, refresh_token_expire_time = refreshTokenExpire });
         }
 
-        [PermissionAuthorize("account_logout")]
         [HttpGet("[action]")]
         public async Task<bool> Logout(string refreshToken)
         {
@@ -146,6 +166,64 @@ namespace DataPlatformSI.WebAPI.Controllers
             _antiforgery.DeleteAntiForgeryCookies();
 
             return true;
+        }
+
+        /// <summary>
+        /// 验证密码
+        /// </summary>
+        [Authorize]
+        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> ValidatePassword(string newPassword)
+        {
+            var user = await _userManager.GetCurrentUserAsync();
+            var result = await _passwordValidator.ValidateAsync(
+                (UserManager<User>)_userManager, user, newPassword);
+            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+        }
+
+        /// <summary>
+        /// 更改密码
+        /// </summary>
+        [Authorize]
+        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            var user = await _userManager.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                // reflect the changes in the Identity cookie
+                await _signInManager.RefreshSignInAsync(user);
+
+                await _emailSender.SendEmailAsync(
+                           email: user.Email,
+                           subject: "您的密码已重置",
+                           viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_ChangePasswordNotification.cshtml",
+                           model: new ChangePasswordNotificationViewModel
+                           {
+                               User = user,
+                               EmailSignature = _siteOptions.Value.Smtp.FromName,
+                               MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
+                           });
+
+                //return RedirectToAction(nameof(Index), "UserCard", routeValues: new { id = user.Id });
+                return Ok();
+            }
+
+            //foreach (var error in result.Errors)
+            //{
+            //    ModelState.AddModelError(string.Empty, error.Description);
+            //}
+
+            return Json(result.DumpErrors(useHtmlNewLine: true));
         }
 
         [HttpGet("[action]"), HttpPost("[action]")]
