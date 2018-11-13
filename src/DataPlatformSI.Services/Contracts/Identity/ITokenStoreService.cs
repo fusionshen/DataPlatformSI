@@ -17,7 +17,7 @@ namespace DataPlatformSI.Services.Contracts.Identity
         Task DeleteTokenAsync(string refreshToken);
         Task DeleteTokensWithSameRefreshTokenSourceAsync(string refreshTokenIdHashSource);
         Task InvalidateUserTokensAsync(int userId);
-        Task<(string accessToken, string refreshToken, IEnumerable<Claim> Claims)> CreateJwtTokens(User user, string refreshTokenSource);
+        Task<(string accessToken,DateTime accessTokenExpire, string refreshToken, DateTime refreshTokenExpire, IEnumerable<Claim> Claims)> CreateJwtTokens(User user, string refreshTokenSource);
         Task RevokeUserBearerTokensAsync(string userIdValue, string refreshToken);
     }
 }

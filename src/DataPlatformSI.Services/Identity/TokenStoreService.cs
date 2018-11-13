@@ -152,14 +152,14 @@ namespace DataPlatformSI.Services.Identity
             return userToken?.AccessTokenExpiresDateTime >= DateTimeOffset.UtcNow;
         }
 
-        public async Task<(string accessToken, string refreshToken, IEnumerable<Claim> Claims)> CreateJwtTokens(User user, string refreshTokenSource)
+        public async Task<(string accessToken,DateTime accessTokenExpire, string refreshToken,DateTime refreshTokenExpire, IEnumerable<Claim> Claims)> CreateJwtTokens(User user, string refreshTokenSource)
         {
             var (AccessToken, Claims) = await CreateAccessTokenAsync(user);
             var refreshToken = Guid.NewGuid().ToString().Replace("-", "");
             await AddUserTokenAsync(user, refreshToken, AccessToken, refreshTokenSource);
             await _uow.SaveChangesAsync();
 
-            return (AccessToken, refreshToken, Claims);
+            return (AccessToken,DateTime.UtcNow.AddMinutes(_configuration.Value.BearerTokens.AccessTokenExpirationMinutes), refreshToken, DateTime.UtcNow.AddMinutes(_configuration.Value.BearerTokens.RefreshTokenExpirationMinutes), Claims);
         }
 
         private async Task<(string AccessToken, IEnumerable<Claim> Claims)> CreateAccessTokenAsync(User user)

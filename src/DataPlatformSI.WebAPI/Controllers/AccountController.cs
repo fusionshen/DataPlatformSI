@@ -83,11 +83,11 @@ namespace DataPlatformSI.WebAPI.Controllers
                                     lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                var (accessToken, refreshToken, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
+                var (accessToken, accessTokenExpire,refreshToken,refreshTokenExpire, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
 
                 _antiforgery.RegenerateAntiForgeryCookies(claims);
 
-                return Ok(new { access_token = accessToken, refresh_token = refreshToken });
+                return Ok(new { access_token = accessToken, access_token_expire_time = accessTokenExpire, refresh_token = refreshToken, refresh_token_expire_time = refreshTokenExpire });
             }
 
             if (result.RequiresTwoFactor)
@@ -124,11 +124,11 @@ namespace DataPlatformSI.WebAPI.Controllers
                 return Unauthorized();
             }
 
-            var (accessToken, newRefreshToken, claims) = await _tokenStoreService.CreateJwtTokens(token.User, refreshToken);
+            var (accessToken, accessTokenExpire, newRefreshToken, refreshTokenExpire, claims) = await _tokenStoreService.CreateJwtTokens(token.User, refreshToken);
 
             _antiforgery.RegenerateAntiForgeryCookies(claims);
 
-            return Ok(new { access_token = accessToken, refresh_token = newRefreshToken });
+            return Ok(new { access_token = accessToken, access_token_expire_time = accessTokenExpire, refresh_token = newRefreshToken, refresh_token_expire_time = refreshTokenExpire });
         }
 
         [PermissionAuthorize("account_logout")]
