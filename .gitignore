@@ -328,4 +328,10 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+<<<<<<< Updated upstream
 
+=======
+/DataPlatformSI/DataPlatformSI.WebAPI/Properties
+
+*.dll
+>>>>>>> Stashed changes
