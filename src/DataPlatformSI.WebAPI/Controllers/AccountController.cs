@@ -130,6 +130,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
 
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         [HttpPost("[action]")]
         public async Task<IActionResult> RefreshToken([FromBody]JToken jsonBody)
         {
@@ -232,6 +233,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             return User.Identity.IsAuthenticated;
         }
 
+        [Authorize]
         [HttpGet("[action]"), HttpPost("[action]")]
         public IActionResult GetUserInfo()
         {
