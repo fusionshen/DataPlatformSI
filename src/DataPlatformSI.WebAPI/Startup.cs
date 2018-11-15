@@ -40,7 +40,7 @@ namespace DataPlatformSI.WebAPI
             services.Configure<SiteSettings>(options => Configuration.Bind(options));
 
             // Adds all of the ASP.NET Core Identity related services and configurations at once.
-            services.AddCustomIdentityServices();
+            services.AddCustomIdentityServices(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 
             var siteSettings = services.GetSiteSettings();
             services.AddRequiredEfInternalServices(siteSettings); // It's added to access services from the dbcontext, remove it if you are using the normal `AddDbContext` and normal constructor dependency injection.
@@ -65,81 +65,6 @@ namespace DataPlatformSI.WebAPI
             services.AddDNTCommonWeb();
             services.AddDNTCaptcha();
             services.AddCloudscribePagination();
-
-            // Needed for jwt auth.
-            services.AddAuthentication(options =>
-            {
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(cfg =>
-                {
-                    cfg.RequireHttpsMetadata = false;
-                    cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = Configuration["BearerTokens:Issuer"], // site that makes the token
-                        ValidateIssuer = false, // TODO: change this to avoid forwarding attacks
-                        ValidAudience = Configuration["BearerTokens:Audience"], // site that consumes the token
-                        ValidateAudience = false, // TODO: change this to avoid forwarding attacks
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["BearerTokens:Key"])),
-                        ValidateIssuerSigningKey = true, // verify signature to avoid tampering
-                        ValidateLifetime = true, // validate the expiration
-                        ClockSkew = TimeSpan.Zero // tolerance for the expiration date
-                    };
-                    cfg.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = context =>
-                        {
-                            var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(JwtBearerEvents));
-                            logger.LogError("Authentication failed.", context.Exception);
-                            return Task.CompletedTask;
-                        },
-                        OnTokenValidated = context =>
-                        {
-                            var tokenValidatorService = context.HttpContext.RequestServices.GetRequiredService<ITokenValidatorService>();
-                            return tokenValidatorService.ValidateAsync(context);
-                        },
-                        OnMessageReceived = context =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnChallenge = context =>
-                        {
-                            var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(JwtBearerEvents));
-                            logger.LogError("OnChallenge error", context.Error, context.ErrorDescription);
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                        .WithOrigins("http://localhost:4200") //Note:  The URL must be specified without a trailing slash (/).
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
-            });
-
-            services.AddAntiforgery(x => x.HeaderName = "X-XSRF-TOKEN");
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1",
-                   new Info()
-                   {
-                       Title = $"DataPlatform API V1",
-                       Version = "V1",
-                       Description = "A webapi application with Swagger, Swashbuckle, and API versioning.",
-                       Contact = new Contact() { Name = "Fusion Shen", Email = "fusionshen@hotmail.com" },
-                       TermsOfService = "Shareware",
-                       License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
-                   }
-                );
-                c.IncludeXmlComments(XmlCommentsFilePath);
-            });
         }
 
         /// <summary>
@@ -234,30 +159,8 @@ namespace DataPlatformSI.WebAPI
                    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            // catch-all handler for HTML5 client routes - serve index.html
-            //app.Run(async context =>
-            //{
-            //    context.Response.ContentType = "text/html";
-            //    await context.Response.SendFileAsync(Path.Combine(env.WebRootPath, "index.html"));
-            //});
-
-            app.UseSwagger();
-            app.UseSwaggerUI(
-                options =>
-                {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "DataPlatform API V1");
-                });
+            app.UseSwaggerServices();
         }
 
-       
-        static string XmlCommentsFilePath
-        {
-            get
-            {
-                var basePath = System.AppContext.BaseDirectory;
-                var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
-                return Path.Combine(basePath, fileName);
-            }
-        }
     }
 }

@@ -30,8 +30,7 @@ namespace DataPlatformSI.Services.Identity
              AuthorizationHandlerContext context,
              DynamicPermissionRequirement requirement)
         {
-            var mvcContext = context.Resource as AuthorizationFilterContext;
-            if (mvcContext == null)
+            if (!(context.Resource is AuthorizationFilterContext mvcContext))
             {
                 return;
             }

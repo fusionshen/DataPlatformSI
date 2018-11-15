@@ -15,7 +15,7 @@ namespace DataPlatformSI.IocConfig
         /// <summary>
         /// Adds all of the ASP.NET Core Identity related services and configurations at once.
         /// </summary>
-        public static void AddCustomIdentityServices(this IServiceCollection services)
+        public static void AddCustomIdentityServices(this IServiceCollection services, string xmlPath)
         {
             var siteSettings = GetSiteSettings(services);
             services.AddIdentityOptions(siteSettings);
@@ -23,6 +23,32 @@ namespace DataPlatformSI.IocConfig
             services.AddCustomTicketStore(siteSettings);
             services.AddDynamicPermissions();
             services.AddCustomDataProtection(siteSettings);
+            services.AddJWTAuthentication(siteSettings);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .WithOrigins("http://localhost:4200") //Note:  The URL must be specified without a trailing slash (/).
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
+
+            services.AddAntiforgery(x => x.HeaderName = "X-XSRF-TOKEN");
+            services.AddSwaggerGen(xmlPath);
+
+
+        }
+
+        public static void UseSwaggerServices(this IApplicationBuilder app)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(
+                options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "DataPlatform API V1");
+                });
         }
 
         /// <summary>

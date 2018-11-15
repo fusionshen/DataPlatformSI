@@ -1,7 +1,6 @@
 ﻿using DataPlatformSI.DataLayer.Context;
 using DataPlatformSI.Common.IdentityToolkit;
 using DataPlatformSI.Common.GuardToolkit;
-using DataPlatformSI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +12,6 @@ using DataPlatformSI.Services.Identity;
 using DataPlatformSI.Services.Contracts.Identity;
 using DataPlatformSI.Entities.Identity;
 using DataPlatformSI.ViewModels.Identity;
-using System.ComponentModel;
-using DataPlatformSI.Services.Authorization;
 using Microsoft.AspNetCore.Identity;
 using DataPlatformSI.ViewModels.Identity.Emails;
 using System;

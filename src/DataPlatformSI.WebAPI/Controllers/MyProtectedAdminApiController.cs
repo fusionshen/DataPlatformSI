@@ -10,12 +10,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using DataPlatformSI.Services.Contracts.Identity;
+using DataPlatformSI.Services.Identity;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
-    //[Authorize(Policy = CustomRoles.Admin)]
+    [Authorize(Roles = ConstantRoles.Admin)]
     public class MyProtectedAdminApiController : Controller
     {
         private readonly IApplicationUserManager _userManager;
@@ -36,7 +37,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Ok(new
             {
                 Id = 1,
-                Title = "Hello from My Protected Admin Api Controller! [Authorize(Policy = CustomRoles.Admin)]",
+                Title = "Hello from My Protected Admin Api Controller! [Authorize(Roles = ConstantRoles.Admin)]",
                 Username = this.User.Identity.Name,
                 UserData = userId,
                 TokenSerialNumber = await _userManager.GetSerialNumberAsync(int.Parse(userId)),

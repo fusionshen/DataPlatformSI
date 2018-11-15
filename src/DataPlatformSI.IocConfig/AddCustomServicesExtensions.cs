@@ -2,7 +2,6 @@
 using System.Security.Principal;
 using DataPlatformSI.DataLayer.Context;
 using DataPlatformSI.Entities.Identity;
-using DataPlatformSI.Services.Authorization;
 using DataPlatformSI.Services.Contracts.Identity;
 using DataPlatformSI.Services.Identity;
 using DataPlatformSI.Services.Identity.Logger;
@@ -74,16 +73,6 @@ namespace DataPlatformSI.IocConfig
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<ITokenStoreService, TokenStoreService>();
             services.AddScoped<ITokenValidatorService, TokenValidatorService>();
-
-            services.AddScoped<IActionPermissionService, ActionPermissionService>();
-
-            // Replace the default authorization policy provider with our own
-            // custom provider which can return authorization policies for given
-            // policy names (instead of using the default policy provider)
-            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-
-            // As always, handlers must be provided for the requirements of the authorization policies
-            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             return services;
         }
