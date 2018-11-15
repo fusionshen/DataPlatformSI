@@ -4,15 +4,74 @@
         <name>DataPlatformSI.WebAPI</name>
     </assembly>
     <members>
+        <member name="T:DataPlatformSI.WebAPI.Controllers.AccountController">
+            <summary>
+            个人账户
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.Login(DataPlatformSI.ViewModels.Identity.LoginViewModel,System.String)">
+            <summary>
+            用户登录
+            </summary>
+            <param name="loginUser">登录所需信息</param>
+            <param name="returnUrl">跳转的路由</param>
+            <returns>token与其过期时间</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.RefreshToken(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            刷新jwt
+            </summary>
+            <param name="jsonBody">刷新token所需信息</param>
+            <returns>token与其过期时间</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.Logout(System.String)">
+            <summary>
+            用户登出
+            </summary>
+            <param name="refreshToken">用于刷新的token</param>
+            <returns>是否登出</returns>
+        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ValidatePassword(System.String)">
             <summary>
             验证密码
             </summary>
+            <param name="newPassword">新密码</param>
+            <returns>是否成功</returns>
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ChangePassword(DataPlatformSI.ViewModels.Identity.ChangePasswordViewModel)">
             <summary>
-            更改密码
+            修改密码
             </summary>
+            <param name="model">修改密码所需信息</param>
+            <returns>是否修改成功</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.GetUserInfo">
+            <summary>
+            用户信息
+            </summary>
+            <returns>用户信息</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ValidatePasswordByEmail(System.String,System.String)">
+            <summary>
+            邮箱验证密码
+            </summary>
+            <param name="password">账户密码</param>
+            <param name="email">账户邮箱</param>
+            <returns>验证结果</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ForgotPassword(DataPlatformSI.ViewModels.Identity.ForgotPasswordViewModel)">
+            <summary>
+            忘记密码
+            </summary>
+            <param name="model">邮箱</param>
+            <returns>发送密码重置邮件</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ResetPassword(DataPlatformSI.ViewModels.Identity.ResetPasswordViewModel)">
+            <summary>
+            重置密码
+            </summary>
+            <param name="model">重置密码所需信息</param>
+            <returns>重置结果</returns>
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetJsonSchemaContentById(System.Int32)">
             <summary>
@@ -34,6 +93,26 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
+        </member>
+        <member name="T:DataPlatformSI.WebAPI.Controllers.TwoFactorController">
+            <summary>
+            两步登录
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.TwoFactorController.SendCode(System.String,System.Boolean)">
+            <summary>
+            发送两步登录验证码
+            </summary>
+            <param name="returnUrl">返回路径</param>
+            <param name="rememberMe">记住登录</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.TwoFactorController.VerifyCode(DataPlatformSI.ViewModels.Identity.VerifyCodeViewModel)">
+            <summary>
+            两步登录校验
+            </summary>
+            <param name="model">期望输入</param>
+            <returns>期望输出</returns>
         </member>
         <member name="T:DataPlatformSI.WebAPI.FunctionsController">
             <summary>

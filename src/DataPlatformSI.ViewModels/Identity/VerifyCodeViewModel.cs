@@ -10,7 +10,7 @@ namespace DataPlatformSI.ViewModels.Identity
         [Required]
         public string Provider { get; set; }
 
-        [Display(Name = "代码")]
+        [Display(Name = "验证码")]
         [Required(ErrorMessage = "(*)")]
         public string Code { get; set; }
 

@@ -37,8 +37,6 @@ namespace DataPlatformSI.IocConfig
 
             services.AddAntiforgery(x => x.HeaderName = "X-XSRF-TOKEN");
             services.AddSwaggerGen(xmlPath);
-
-
         }
 
         public static void UseSwaggerServices(this IApplicationBuilder app)
