@@ -17,19 +17,19 @@
             <param name="returnUrl">跳转的路由</param>
             <returns>token与其过期时间</returns>
         </member>
-        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.RefreshToken(Newtonsoft.Json.Linq.JToken)">
-            <summary>
-            刷新jwt
-            </summary>
-            <param name="jsonBody">刷新token所需信息</param>
-            <returns>token与其过期时间</returns>
-        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.Logout(System.String)">
             <summary>
             用户登出
             </summary>
             <param name="refreshToken">用于刷新的token</param>
             <returns>是否登出</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.RefreshToken(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            刷新jwt
+            </summary>
+            <param name="jsonBody">刷新token所需信息</param>
+            <returns>token与其过期时间</returns>
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ValidatePassword(System.String)">
             <summary>
@@ -73,6 +73,74 @@
             <param name="model">重置密码所需信息</param>
             <returns>重置结果</returns>
         </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ValidateUsername(System.String,System.String)">
+            <summary>
+            验证账户用户名和邮箱
+            </summary>
+            <param name="username">用户名</param>
+            <param name="email">邮箱</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ValidatePasswordByUsername(System.String,System.String)">
+            <summary>
+            根据用户名验证密码
+            </summary>
+            <param name="password">密码</param>
+            <param name="username">用户名</param>
+            <returns>期待返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ConfirmEmail(System.String,System.String)">
+            <summary>
+            邮件确认验证码
+            </summary>
+            <param name="userId">用户密码</param>
+            <param name="code">验证码</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.Register(DataPlatformSI.ViewModels.Identity.RegisterViewModel)">
+            <summary>
+            用户注册
+            </summary>
+            <param name="model">注册所需信息</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="T:DataPlatformSI.WebAPI.Controllers.LogsController">
+            <summary>
+            系统日志模块
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.LogsController.GetLogList(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            获得日志列表
+            </summary>
+            <param name="logLevel"></param>
+            <param name="pageNumber"></param>
+            <param name="pageSize"></param>
+            <param name="sort"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.LogsController.Delete(System.Int32)">
+            <summary>
+            restful删除日志
+            </summary>
+            <param name="id">日志id</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.LogsController.DeleteAll(System.String)">
+            <summary>
+            按照级别批量删除
+            </summary>
+            <param name="logLevel">日志级别</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.LogsController.DeleteOlderThan(System.String,System.Int32)">
+            <summary>
+            按照条件批量删除
+            </summary>
+            <param name="logLevel">日志级别</param>
+            <param name="days">几天前</param>
+            <returns></returns>
+        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetJsonSchemaContentById(System.Int32)">
             <summary>
             下载JsonSchema
@@ -92,6 +160,77 @@
             下载dll
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DataPlatformSI.WebAPI.Controllers.RolesController">
+            <summary>
+            角色管理
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.GetRoleList">
+            <summary>
+            获得角色列表
+            </summary>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.Get">
+            <summary>
+            restful获得角色列表
+            </summary>
+            <returns>期望返回</returns>
+            GET: api/Modules
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.EditRole(DataPlatformSI.ViewModels.Identity.RoleViewModel)">
+            <summary>
+            编辑角色
+            </summary>
+            <param name="model">角色实体</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.Put(System.Int32,DataPlatformSI.ViewModels.Identity.RoleViewModel)">
+            <summary>
+            restful编辑角色
+            </summary>
+            <param name="id">角色id</param>
+            <param name="model">实体</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.AddRole(DataPlatformSI.ViewModels.Identity.RoleViewModel)">
+            <summary>
+            新增角色
+            </summary>
+            <param name="model">新增角色实体</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.Post(DataPlatformSI.ViewModels.Identity.RoleViewModel)">
+            <summary>
+            restful新增角色
+            </summary>
+            <param name="model"></param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.DeleteRole(DataPlatformSI.ViewModels.Identity.RoleViewModel)">
+            <summary>
+            删除角色
+            </summary>
+            <param name="model">所需实体</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.Delete(System.Int32)">
+            <summary>
+            restful删除角色
+            </summary>
+            <param name="id">角色id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.UsersInRole(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.Data.SqlClient.SortOrder)">
+            <summary>
+            角色下用户列表
+            </summary>
+            <param name="id">角色id</param>
+            <param name="page">第几页</param>
+            <param name="field">排序列</param>
+            <param name="order">排序方式</param>
             <returns></returns>
         </member>
         <member name="T:DataPlatformSI.WebAPI.Controllers.TwoFactorController">

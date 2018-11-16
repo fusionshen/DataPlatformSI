@@ -44,7 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataPlatformSI.Common\DataPlatformSI.Common.csproj" />
     <ProjectReference Include="..\DataPlatformSI.DataLayer\DataPlatformSI.DataLayer.csproj" />
+    <ProjectReference Include="..\DataPlatformSI.Entities\DataPlatformSI.Entities.csproj" />
     <ProjectReference Include="..\DataPlatformSI.IocConfig\DataPlatformSI.IocConfig.csproj" />
     <ProjectReference Include="..\DataPlatformSI.Services\DataPlatformSI.Services.csproj" />
     <ProjectReference Include="..\DataPlatformSI.ViewModels\DataPlatformSI.ViewModels.csproj" />

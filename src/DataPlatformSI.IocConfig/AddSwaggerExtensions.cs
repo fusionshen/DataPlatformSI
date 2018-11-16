@@ -20,7 +20,7 @@ namespace DataPlatformSI.IocConfig
                        Title = $"DataPlatform API V1",
                        Version = "V1",
                        Description = "A webapi application with Swagger, Swashbuckle, and API versioning.",
-                       Contact = new Contact() { Name = "Fusion Shen", Email = "fusionshen@hotmail.com",Url="www.github.com/fusionshen" },
+                       Contact = new Contact() { Name = "Fusion Shen", Email = "fusionshen@hotmail.com", Url="www.eabax.com" },
                        TermsOfService = "Shareware",
                        License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
                    }

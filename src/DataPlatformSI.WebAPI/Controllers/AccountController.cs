@@ -33,6 +33,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         private readonly IApplicationUserManager _userManager;
         private readonly IApplicationSignInManager _signInManager;
         private readonly IPasswordValidator<User> _passwordValidator;
+        private readonly IUserValidator<User> _userValidator;
         private readonly ITokenStoreService _tokenStoreService;
         private readonly IUnitOfWork _uow;
         private readonly IAntiForgeryCookieService _antiforgery;
@@ -43,6 +44,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             IApplicationSignInManager signInManager,
             IEmailSender emailSender,
             IPasswordValidator<User> passwordValidator,
+            IUserValidator<User> userValidator,
             ITokenStoreService tokenStoreService,
             IUnitOfWork uow,
             IAntiForgeryCookieService antiforgery,
@@ -60,6 +62,9 @@ namespace DataPlatformSI.WebAPI.Controllers
 
             _passwordValidator = passwordValidator;
             _passwordValidator.CheckArgumentIsNull(nameof(_passwordValidator));
+
+            _userValidator = userValidator;
+            _userValidator.CheckArgumentIsNull(nameof(_userValidator));
 
             _emailSender = emailSender;
             _emailSender.CheckArgumentIsNull(nameof(_emailSender));
@@ -84,7 +89,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="returnUrl">跳转的路由</param>
         /// <returns>token与其过期时间</returns>
         [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody]  LoginViewModel loginUser, string returnUrl = null)
         {
@@ -131,15 +136,45 @@ namespace DataPlatformSI.WebAPI.Controllers
 
             if (result.IsLockedOut)
             {
+                _logger.LogWarning(2, $"用户:{loginUser.Username}被锁定");
+                return Json("用户被锁定");
 
             }
 
             if (result.IsNotAllowed)
             {
-
+                return Json("用户被禁");
             }
 
-            return Unauthorized();
+            return BadRequest("发生一些莫名错误");
+        }
+
+        /// <summary>
+        /// 用户登出
+        /// </summary>
+        /// <param name="refreshToken">用于刷新的token</param>
+        /// <returns>是否登出</returns>
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Logout(string refreshToken)
+        {
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userIdValue = claimsIdentity.FindFirst(ClaimTypes.UserData)?.Value;
+
+            var user = User.Identity.IsAuthenticated ? await _userManager.FindByIdAsync(userIdValue) : null;
+            await _signInManager.SignOutAsync();
+            if (user != null)
+            {
+                await _userManager.UpdateSecurityStampAsync(user);
+                // The Jwt implementation does not support "revoke OAuth token" (logout) by design.
+                // Delete the user's tokens from the database (revoke its bearer token)
+                await _tokenStoreService.RevokeUserBearerTokensAsync(userIdValue, refreshToken);
+                await _uow.SaveChangesAsync();
+                _antiforgery.DeleteAntiForgeryCookies();
+                _logger.LogInformation(4, $"{user.UserName} logged out.");
+                return Json("true");
+            }
+            return BadRequest("user not found");
         }
 
         /// <summary>
@@ -171,27 +206,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Ok(new { access_token = accessToken, access_token_expire_time = accessTokenExpire, refresh_token = newRefreshToken, refresh_token_expire_time = refreshTokenExpire });
         }
 
-        /// <summary>
-        /// 用户登出
-        /// </summary>
-        /// <param name="refreshToken">用于刷新的token</param>
-        /// <returns>是否登出</returns>
-        [AllowAnonymous]
-        [HttpGet("[action]")]
-        public async Task<IActionResult> Logout(string refreshToken)
-        {
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userIdValue = claimsIdentity.FindFirst(ClaimTypes.UserData)?.Value;
-
-            // The Jwt implementation does not support "revoke OAuth token" (logout) by design.
-            // Delete the user's tokens from the database (revoke its bearer token)
-            await _tokenStoreService.RevokeUserBearerTokensAsync(userIdValue, refreshToken);
-            await _uow.SaveChangesAsync();
-
-            _antiforgery.DeleteAntiForgeryCookies();
-
-            return Json("true");
-        }
+       
 
         /// <summary>
         /// 验证密码
@@ -242,15 +257,8 @@ namespace DataPlatformSI.WebAPI.Controllers
                                EmailSignature = _siteOptions.Value.Smtp.FromName,
                                MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
                            });
-
-                //return RedirectToAction(nameof(Index), "UserCard", routeValues: new { id = user.Id });
                 return Ok();
             }
-
-            //foreach (var error in result.Errors)
-            //{
-            //    ModelState.AddModelError(string.Empty, error.Description);
-            //}
 
             return Json(result.DumpErrors(useHtmlNewLine: true));
         }
@@ -273,6 +281,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="password">账户密码</param>
         /// <param name="email">账户邮箱</param>
         /// <returns>验证结果</returns>
+        [AllowAnonymous]
         [HttpPost("[action]"), ValidateAntiForgeryToken]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ValidatePasswordByEmail(string password, string email)
@@ -293,6 +302,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="model">邮箱</param>
         /// <returns>发送密码重置邮件</returns>
+        [AllowAnonymous]
         [HttpPost("[action]")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
@@ -325,6 +335,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="model">重置密码所需信息</param>
         /// <returns>重置结果</returns>
+        [AllowAnonymous]
         [HttpPost("[action]")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
@@ -340,5 +351,106 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
         }
 
+        /// <summary>
+        /// 验证账户用户名和邮箱
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <param name="email">邮箱</param>
+        /// <returns>期望返回</returns>
+        [AllowAnonymous]
+        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> ValidateUsername(string username, string email)
+        {
+            var result = await _userValidator.ValidateAsync(
+                (UserManager<User>)_userManager, new User { UserName = username, Email = email });
+            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+        }
+
+        /// <summary>
+        /// 根据用户名验证密码
+        /// </summary>
+        /// <param name="password">密码</param>
+        /// <param name="username">用户名</param>
+        /// <returns>期待返回</returns>
+        [AllowAnonymous]
+        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> ValidatePasswordByUsername(string password, string username)
+        {
+            var result = await _passwordValidator.ValidateAsync(
+                (UserManager<User>)_userManager, new User { UserName = username }, password);
+            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+        }
+
+        /// <summary>
+        /// 邮件确认验证码
+        /// </summary>
+        /// <param name="userId">用户密码</param>
+        /// <param name="code">验证码</param>
+        /// <returns>期望返回</returns>
+        [AllowAnonymous]
+        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return BadRequest("Error");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest("NotFound");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+        }
+
+        /// <summary>
+        /// 用户注册
+        /// </summary>
+        /// <param name="model">注册所需信息</param>
+        /// <returns>期望返回</returns>
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            var user = new User
+            {
+                UserName = model.Username,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation(3, $"{user.UserName} created a new account with password.");
+
+                if (_siteOptions.Value.EnableEmailConfirmation)
+                {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //ControllerExtensions.ShortControllerName<RegisterController>(), //todo: use everywhere .................
+
+                    await _emailSender.SendEmailAsync(
+                        email: user.Email,
+                        subject: "请激活您的账户",
+                        viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_RegisterEmailConfirmation.cshtml",
+                        model: new RegisterEmailConfirmationViewModel
+                        {
+                            User = user,
+                            EmailConfirmationToken = code,
+                            EmailSignature = _siteOptions.Value.Smtp.FromName,
+                            MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
+                        });
+                }
+            }
+
+            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+
+        }
     }
 }

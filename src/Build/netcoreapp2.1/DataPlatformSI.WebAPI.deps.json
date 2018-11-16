@@ -26,7 +26,9 @@
         "dependencies": {
           "DNTBreadCrumb.Core": "1.7.1",
           "DNTCaptcha.Core": "1.6.0",
+          "DataPlatformSI.Common": "1.0.0",
           "DataPlatformSI.DataLayer": "1.0.0",
+          "DataPlatformSI.Entities": "1.0.0",
           "DataPlatformSI.IocConfig": "1.0.0",
           "DataPlatformSI.Services": "1.0.0",
           "DataPlatformSI.ViewModels": "1.0.0",
