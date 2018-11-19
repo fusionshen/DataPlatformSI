@@ -1,0 +1,357 @@
+﻿using System;
+using DataPlatformSI.Common.GuardToolkit;
+using DataPlatformSI.Common.IdentityToolkit;
+using System.Threading.Tasks;
+using DataPlatformSI.Entities.Identity;
+using DataPlatformSI.Services.Contracts.Identity;
+using DataPlatformSI.ViewModels.Identity.Settings;
+using DNTCommon.Web.Core;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using DataPlatformSI.Services.Identity;
+using DataPlatformSI.ViewModels.Identity;
+using System.IO;
+using DataPlatformSI.ViewModels.Identity.Emails;
+
+namespace DataPlatformSI.WebAPI.Controllers
+{
+    /// <summary>
+    /// 个人信息
+    /// </summary>
+    [Authorize]
+    [Route("api/[controller]")]
+    [EnableCors("CorsPolicy")]
+    public class UserController : Controller
+    {
+        private readonly IEmailSender _emailSender;
+        private readonly IProtectionProviderService _protectionProviderService;
+        private readonly IApplicationRoleManager _roleManager;
+        private readonly IApplicationSignInManager _signInManager;
+        private readonly IOptionsSnapshot<SiteSettings> _siteOptions;
+        private readonly IUsedPasswordsService _usedPasswordsService;
+        private readonly IApplicationUserManager _userManager;
+        private readonly IUsersPhotoService _usersPhotoService;
+        private readonly IUserValidator<User> _userValidator;
+        private readonly ILogger<UserController> _logger;
+
+        public UserController(
+            IApplicationUserManager userManager,
+            IApplicationRoleManager roleManager,
+            IApplicationSignInManager signInManager,
+            IProtectionProviderService protectionProviderService,
+            IUserValidator<User> userValidator,
+            IUsedPasswordsService usedPasswordsService,
+            IUsersPhotoService usersPhotoService,
+            IOptionsSnapshot<SiteSettings> siteOptions,
+            IEmailSender emailSender,
+            ILogger<UserController> logger)
+        {
+            _userManager = userManager;
+            _userManager.CheckArgumentIsNull(nameof(_userManager));
+
+            _roleManager = roleManager;
+            _roleManager.CheckArgumentIsNull(nameof(_roleManager));
+
+            _signInManager = signInManager;
+            _signInManager.CheckArgumentIsNull(nameof(_signInManager));
+
+            _protectionProviderService = protectionProviderService;
+            _protectionProviderService.CheckArgumentIsNull(nameof(_protectionProviderService));
+
+            _userValidator = userValidator;
+            _userValidator.CheckArgumentIsNull(nameof(_userValidator));
+
+            _usedPasswordsService = usedPasswordsService;
+            _usedPasswordsService.CheckArgumentIsNull(nameof(_usedPasswordsService));
+
+            _usersPhotoService = usersPhotoService;
+            _usersPhotoService.CheckArgumentIsNull(nameof(_usersPhotoService));
+
+            _siteOptions = siteOptions;
+            _siteOptions.CheckArgumentIsNull(nameof(_siteOptions));
+
+            _emailSender = emailSender;
+            _emailSender.CheckArgumentIsNull(nameof(_emailSender));
+
+            _logger = logger;
+            _logger.CheckArgumentIsNull(nameof(_logger));
+        }
+
+        ///// <summary>
+        ///// 获取个人信息
+        ///// </summary>
+        ///// <param name="userId">用户Id</param>
+        ///// <returns>期望返回</returns>
+        //[Authorize(Roles = ConstantRoles.Admin)]
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Get(int? userId)
+        //{
+        //    if (!userId.HasValue)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var user = await _userManager.FindByIdAsync(userId.ToString());
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return await RenderModel(user, isAdminEdit: true);
+        //}
+
+        ///// <summary>
+        ///// 获取个人信息
+        ///// </summary>
+        ///// <returns>期望返回</returns>
+        //[HttpGet]
+        //public async Task<IActionResult> Get()
+        //{
+        //    var user = await _userManager.GetCurrentUserAsync();
+        //    return await RenderModel(user, isAdminEdit: false);
+        //}
+
+
+        /// <summary>
+        /// 获取个人信息
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <returns>期望返回</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int? userId)
+        {
+            if (userId.HasValue && !await _roleManager.IsCurrentUserInRoleAsync(ConstantRoles.Admin))
+            {
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return await RenderModel(user, isAdminEdit: true);
+            }
+            else
+            {
+                var user = await _userManager.GetCurrentUserAsync();
+                return await RenderModel(user, isAdminEdit: false);
+            }
+        }
+
+        /// <summary>
+        /// 更改个人信息
+        /// </summary>
+        /// <param name="model">更改信息所需</param>
+        /// <returns>期望返回</returns>
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Put(UserProfileViewModel model)
+        {
+            var pid = _protectionProviderService.Decrypt(model.Pid);
+            if (string.IsNullOrWhiteSpace(pid))
+            {
+                return BadRequest("Error");
+            }
+
+            if (pid != _userManager.GetCurrentUserId() &&
+                ! await _roleManager.IsCurrentUserInRoleAsync(ConstantRoles.Admin))
+            {
+                _logger.LogWarning($"不存在用户{pid}");
+                return BadRequest("Error");
+            }
+
+            var user = await _userManager.FindByIdAsync(pid);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.IsEmailPublic = model.IsEmailPublic;
+            user.TwoFactorEnabled = model.TwoFactorEnabled;
+            user.Location = model.Location;
+
+            UpdateUserBirthDate(model, user);
+
+            var (can, error) = await CanUpdateUserName(model, user);
+            if (!can)
+            {
+                return BadRequest(error);
+            }
+            (can,error) = await CanUpdateUserAvatarImage(model, user);
+            if (!can)
+            {
+                return BadRequest(error);
+            }
+            (can, error) = await CanUpdateUserEmail(model, user);
+            if (!can)
+            {
+                return BadRequest(error);
+            }
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (updateResult.Succeeded)
+            {
+                if (!model.IsAdminEdit)
+                {
+                    // reflect the changes in the current user's Identity cookie
+                    await _signInManager.RefreshSignInAsync(user);
+                }
+
+                await _emailSender.SendEmailAsync(
+                        email: user.Email,
+                        subject: "用户个人信息更改通知",
+                        viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_UserProfileUpdateNotification.cshtml",
+                        model: new UserProfileUpdateNotificationViewModel
+                        {
+                            User = user,
+                            EmailSignature = _siteOptions.Value.Smtp.FromName,
+                            MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
+                        });
+
+                //return RedirectToAction(nameof(Index), "UserCard", routeValues: new { id = user.Id });
+                return Ok();
+            }
+            return BadRequest(updateResult.DumpErrors(useHtmlNewLine: true));
+        }
+
+        /// <summary>
+        /// 验证用户名和邮箱
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <param name="email">邮箱</param>
+        /// <param name="pid">加密的userId</param>
+        /// <returns></returns>
+        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> ValidateUsername(string username, string email, string pid)
+        {
+            pid = _protectionProviderService.Decrypt(pid);
+            if (string.IsNullOrWhiteSpace(pid))
+            {
+                return Json("缺少参数");
+            }
+
+            var user = await _userManager.FindByIdAsync(pid);
+            user.UserName = username;
+            user.Email = email;
+
+            var result = await _userValidator.ValidateAsync((UserManager<User>)_userManager, user);
+            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+        }
+
+        private void UpdateUserBirthDate(UserProfileViewModel model, User user)
+        {
+            if (model.DateOfBirthYear.HasValue &&
+                model.DateOfBirthMonth.HasValue &&
+                model.DateOfBirthDay.HasValue)
+            {
+                var date =
+                    $"{model.DateOfBirthYear.Value.ToString()}/{model.DateOfBirthMonth.Value.ToString("00")}/{model.DateOfBirthDay.Value.ToString("00")}";
+                user.BirthDate = Convert.ToDateTime(date);
+            }
+            else
+            {
+                user.BirthDate = null;
+            }
+        }
+
+        private async Task<IActionResult> RenderModel(User user, bool isAdminEdit)
+        {
+            _usersPhotoService.SetUserDefaultPhoto(user);
+
+            var userProfile = new UserProfileViewModel
+            {
+                IsAdminEdit = isAdminEdit,
+                Email = user.Email,
+                PhotoFileName = user.PhotoFileName,
+                Location = user.Location,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Pid = _protectionProviderService.Encrypt(user.Id.ToString()),
+                IsEmailPublic = user.IsEmailPublic,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+                IsPasswordTooOld = await _usedPasswordsService.IsLastUserPasswordTooOldAsync(user.Id)
+            };
+
+            if (user.BirthDate.HasValue)
+            {
+                userProfile.DateOfBirthYear = user.BirthDate.Value.Year;
+                userProfile.DateOfBirthMonth = user.BirthDate.Value.Month;
+                userProfile.DateOfBirthDay = user.BirthDate.Value.Day;
+            }
+
+            return Json(userProfile);
+        }
+
+        private async Task<(bool,string)> CanUpdateUserAvatarImage(UserProfileViewModel model, User user)
+        {
+            _usersPhotoService.SetUserDefaultPhoto(user);
+
+            var photoFile = model.Photo;
+            if (photoFile != null && photoFile.Length > 0)
+            {
+                var imageOptions = _siteOptions.Value.UserAvatarImageOptions;
+                if (!photoFile.IsValidImageFile(maxWidth: imageOptions.MaxWidth, maxHeight: imageOptions.MaxHeight))
+                {
+                    return (false, $"图片最大高度为 {imageOptions.MaxHeight} ，最大宽度为{imageOptions.MaxWidth}");
+                }
+
+                var uploadsRootFolder = _usersPhotoService.GetUsersAvatarsFolderPath();
+                var photoFileName = $"{user.Id}{Path.GetExtension(photoFile.FileName)}";
+                var filePath = Path.Combine(uploadsRootFolder, photoFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await photoFile.CopyToAsync(fileStream);
+                }
+                user.PhotoFileName = photoFileName;
+            }
+            return (true,null);
+        }
+
+        private async Task<(bool,string)> CanUpdateUserEmail(UserProfileViewModel model, User user)
+        {
+            if (user.Email != model.Email)
+            {
+                user.Email = model.Email;
+                var result =
+                    await _userValidator.ValidateAsync((UserManager<User>)_userManager, user);
+                if (!result.Succeeded)
+                {
+                    return (false,result.DumpErrors(useHtmlNewLine:true));
+                }
+
+                user.EmailConfirmed = false;
+
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                await _emailSender.SendEmailAsync(
+                    email: user.Email,
+                    subject: "更改邮箱确认",
+                    viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_RegisterEmailConfirmation.cshtml",
+                    model: new RegisterEmailConfirmationViewModel
+                    {
+                        User = user,
+                        EmailConfirmationToken = code,
+                        EmailSignature = _siteOptions.Value.Smtp.FromName,
+                        MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
+                    });
+            }
+
+            return (true,null);
+        }
+
+        private async Task<(bool,string)> CanUpdateUserName(UserProfileViewModel model, User user)
+        {
+            if (user.UserName != model.UserName)
+            {
+                user.UserName = model.UserName;
+                var result =
+                    await _userValidator.ValidateAsync((UserManager<User>)_userManager, user);
+                return (result.Succeeded,result.DumpErrors(useHtmlNewLine: true));
+            }
+            return (true, null);
+        }
+    }
+}

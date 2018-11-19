@@ -47,7 +47,7 @@
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.GetUserInfo">
             <summary>
-            用户信息
+            用户信息 For Test
             </summary>
             <returns>用户信息</returns>
         </member>
@@ -109,9 +109,9 @@
             系统日志模块
             </summary>
         </member>
-        <member name="M:DataPlatformSI.WebAPI.Controllers.LogsController.GetLogList(System.String,System.Int32,System.Int32,System.String)">
+        <member name="M:DataPlatformSI.WebAPI.Controllers.LogsController.Get(System.String,System.Int32,System.Int32,System.String)">
             <summary>
-            获得日志列表
+            restful获得日志列表
             </summary>
             <param name="logLevel"></param>
             <param name="pageNumber"></param>
@@ -252,6 +252,115 @@
             </summary>
             <param name="model">期望输入</param>
             <returns>期望输出</returns>
+        </member>
+        <member name="T:DataPlatformSI.WebAPI.Controllers.UserController">
+            <summary>
+            个人信息
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.Get(System.Nullable{System.Int32})">
+            <summary>
+            获取个人信息
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.Put(DataPlatformSI.ViewModels.Identity.UserProfileViewModel)">
+            <summary>
+            更改个人信息
+            </summary>
+            <param name="model">更改信息所需</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.ValidateUsername(System.String,System.String,System.String)">
+            <summary>
+            验证用户名和邮箱
+            </summary>
+            <param name="username">用户名</param>
+            <param name="email">邮箱</param>
+            <param name="pid">加密的userId</param>
+            <returns></returns>
+        </member>
+        <member name="T:DataPlatformSI.WebAPI.Controllers.UsersController">
+            <summary>
+            用户管理
+            </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.Get(System.Nullable{System.Int32},System.String,System.Data.SqlClient.SortOrder)">
+            <summary>
+            获取列表
+            </summary>
+            <param name="page"></param>
+            <param name="field"></param>
+            <param name="order"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.ActivateUserEmailStat(System.Int32)">
+            <summary>
+            激活邮件确认
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns>期望输出</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.ChangeUserLockoutMode(System.Int32,System.Boolean)">
+            <summary>
+            修改封停状态
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="activate">是否封停</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.ChangeUserRoles(System.Int32,System.Int32[])">
+            <summary>
+            修改用户角色
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="roleIds">角色Ids</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.ChangeUserStat(System.Int32,System.Boolean)">
+            <summary>
+            激活或失活
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="activate">是否激活</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.ChangeUserTwoFactorAuthenticationStat(System.Int32,System.Boolean)">
+            <summary>
+            修改用户两步登录状态
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="activate">打开或者关闭</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.EndUserLockout(System.Int32)">
+            <summary>
+            清除封停时间
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.SearchUsers(DataPlatformSI.ViewModels.Identity.SearchUsersViewModel)">
+            <summary>
+            模糊查找
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.Get(System.Nullable{System.Int32})">
+            <summary>
+            获得用户卡片
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.EmailToImage(System.Nullable{System.Int32})">
+            <summary>
+            获得用户邮箱图片
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns>期望返回</returns>
         </member>
         <member name="T:DataPlatformSI.WebAPI.FunctionsController">
             <summary>

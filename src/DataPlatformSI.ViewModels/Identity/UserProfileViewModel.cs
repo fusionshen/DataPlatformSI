@@ -27,19 +27,19 @@ namespace DataPlatformSI.ViewModels.Identity
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "(*)")]
-        [Remote("ValidateUsername", "UserProfile",
-            AdditionalFields = nameof(UserName) + "," + ViewModelConstants.AntiForgeryToken + "," + nameof(Pid),
-            HttpMethod = "POST")]
-        //[EmailAddress(ErrorMessage = "لطفا آدرس ایمیل معتبری را وارد نمائید.")]
+        //[Remote("ValidateUsername", "UserProfile",
+        //    AdditionalFields = nameof(UserName) + "," + ViewModelConstants.AntiForgeryToken + "," + nameof(Pid),
+        //    HttpMethod = "POST")]
+        [EmailAddress(ErrorMessage = "不是有效的邮箱")]
         [Display(Name = "邮箱地址")]
         public string Email { get; set; }
 
         [Display(Name = "头像")]
-        //[StringLength(maximumLength: 1000, ErrorMessage = "حداکثر طول آدرس تصویر 1000 حرف است.")]
+        [StringLength(maximumLength: 1000, ErrorMessage = "")]
         public string PhotoFileName { set; get; }
 
-        //[UploadFileExtensions(AllowedImages,
-        //    ErrorMessage = "لطفا تنها یک تصویر " + AllowedImages + " را ارسال نمائید.")]
+        [UploadFileExtensions(AllowedImages,
+        ErrorMessage = "请确认图片格式:" + AllowedImages)]
         [DataType(DataType.Upload)]
         public IFormFile Photo { get; set; }
 

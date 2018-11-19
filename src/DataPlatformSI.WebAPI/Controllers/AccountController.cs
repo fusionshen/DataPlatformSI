@@ -131,7 +131,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 return RedirectToAction(
                         nameof(TwoFactorController.SendCode),
                         "TwoFactor",
-                        new { ReturnUrl = returnUrl, RememberMe = loginUser.RememberMe });
+                        routeValues: new { ReturnUrl = returnUrl, loginUser.RememberMe });
             }
 
             if (result.IsLockedOut)
@@ -264,7 +264,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
 
         /// <summary>
-        /// 用户信息
+        /// 用户信息 For Test
         /// </summary>
         /// <returns>用户信息</returns>
         [Authorize]

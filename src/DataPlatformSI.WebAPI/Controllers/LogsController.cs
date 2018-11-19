@@ -30,15 +30,15 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
 
         /// <summary>
-        /// 获得日志列表
+        /// restful获得日志列表
         /// </summary>
         /// <param name="logLevel"></param>
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetLogList(
+        [HttpGet]
+        public async Task<IActionResult> Get(
                         string logLevel = "",
                         int pageNumber = 1,
                         int pageSize = -1,
