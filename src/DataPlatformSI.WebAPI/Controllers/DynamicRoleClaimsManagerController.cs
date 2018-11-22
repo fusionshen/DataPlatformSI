@@ -42,7 +42,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             var role = await _roleManager.FindRoleIncludeRoleClaimsAsync(id.Value);
             if (role == null)
             {
-                return BadRequest("role not be found "); ;
+                return NotFound();
             }
 
             var securedControllerActions = _mvcActionsDiscoveryService.GetAllSecuredControllerActionsWithPolicy(ConstantPolicies.DynamicPermission);
@@ -53,6 +53,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             });
         }
 
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public IActionResult GetPermissionList()
         {
@@ -60,7 +61,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Json(securedControllerActions);
         }
 
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> AddOrUpdateRoleClaims(DynamicRoleClaimsManagerViewModel model)
         {

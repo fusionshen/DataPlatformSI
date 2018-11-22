@@ -223,7 +223,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="email">邮箱</param>
         /// <param name="pid">加密的userId</param>
         /// <returns></returns>
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ValidateUsername(string username, string email, string pid)
         {
@@ -296,7 +296,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 var imageOptions = _siteOptions.Value.UserAvatarImageOptions;
                 if (!photoFile.IsValidImageFile(maxWidth: imageOptions.MaxWidth, maxHeight: imageOptions.MaxHeight))
                 {
-                    return (false, $"图片最大高度为 {imageOptions.MaxHeight} ，最大宽度为{imageOptions.MaxWidth}");
+                    return (false, $"图片最大高度为{imageOptions.MaxHeight} ，最大宽度为{imageOptions.MaxWidth}");
                 }
 
                 var uploadsRootFolder = _usersPhotoService.GetUsersAvatarsFolderPath();

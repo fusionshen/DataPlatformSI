@@ -62,7 +62,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">角色实体</param>
         /// <returns>期望返回</returns>
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditRole(RoleViewModel model)
         {
      
@@ -103,7 +102,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">新增角色实体</param>
         /// <returns>期望返回</returns>
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddRole(RoleViewModel model)
         {
             var result = await _roleManager.CreateAsync(new Role(model.Name));
@@ -117,7 +115,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns>期望返回</returns>
         // POST: api/Roles
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Post(RoleViewModel model)
         {
             var result = await _roleManager.CreateAsync(new Role(model.Name));
@@ -130,7 +127,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">所需实体</param>
         /// <returns>期望返回</returns>
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteRole(RoleViewModel model)
         {
             var role = await _roleManager.FindByIdAsync(model.Id);
@@ -150,7 +146,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns></returns>
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());

@@ -59,7 +59,7 @@ namespace DataPlatformSI.IocConfig
             services.AddScoped<IEmailSender, AuthMessageSender>();
             services.AddScoped<ISmsSender, AuthMessageSender>();
 
-            // services.AddSingleton<IAntiforgery, NoBrowserCacheAntiforgery>();
+            //services.AddSingleton<IAntiforgery, NoBrowserCacheAntiforgery>();
             // services.AddSingleton<IHtmlGenerator, NoBrowserCacheHtmlGenerator>();
 
             services.AddScoped<IIdentityDbInitializer, IdentityDbInitializer>();

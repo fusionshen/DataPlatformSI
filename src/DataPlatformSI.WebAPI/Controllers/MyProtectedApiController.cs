@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
-    [Authorize]
     public class MyProtectedApiController : Controller
     {
         [HttpGet]

@@ -64,7 +64,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="id">日志id</param>
         /// <returns>期望返回</returns>
         [HttpDelete("{id}")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             await _appLogItemsService.DeleteAsync(id);
@@ -77,7 +76,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="logLevel">日志级别</param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAll(string logLevel = "")
         {
             await _appLogItemsService.DeleteAllAsync(logLevel);
@@ -91,7 +89,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="days">几天前</param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteOlderThan(string logLevel = "", int days = 5)
         {
             var cutoffUtc = DateTimeOffset.UtcNow.AddDays(-days);

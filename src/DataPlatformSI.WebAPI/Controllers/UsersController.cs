@@ -64,7 +64,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="userId">用户Id</param>
         /// <returns>期望输出</returns>
-        [HttpPost("{userId}/[action]"), ValidateAntiForgeryToken]
+        [HttpPost("{userId}/[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ActivateUserEmailStat(int userId)
         {
@@ -84,7 +84,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="userId">用户Id</param>
         /// <param name="activate">是否封停</param>
         /// <returns>期望返回</returns>
-        [HttpPost("{userId}/[action]"), ValidateAntiForgeryToken]
+        [HttpPost("{userId}/[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ChangeUserLockoutMode(int userId, bool activate)
         {
@@ -104,7 +104,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="userId">用户Id</param>
         /// <param name="roleIds">角色Ids</param>
         /// <returns>期望返回</returns>
-        [HttpPost("{userId}/[action]"), ValidateAntiForgeryToken]
+        [HttpPost("{userId}/[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ChangeUserRoles(int userId, int[] roleIds)
         {
@@ -120,7 +120,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="userId">用户Id</param>
         /// <param name="activate">是否激活</param>
         /// <returns>期望返回</returns>
-        [HttpPost("{userId}/[action]"), ValidateAntiForgeryToken]
+        [HttpPost("{userId}/[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ChangeUserStat(int userId, bool activate)
         {
@@ -140,7 +140,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="userId">用户Id</param>
         /// <param name="activate">打开或者关闭</param>
         /// <returns>期望返回</returns>
-        [HttpPost("{userId}/[action]"), ValidateAntiForgeryToken]
+        [HttpPost("{userId}/[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ChangeUserTwoFactorAuthenticationStat(int userId, bool activate)
         {
@@ -159,7 +159,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="userId">用户Id</param>
         /// <returns>期望返回</returns>
-        [HttpPost("{userId}/[action]"), ValidateAntiForgeryToken]
+        [HttpPost("{userId}/[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> EndUserLockout(int userId)
         {

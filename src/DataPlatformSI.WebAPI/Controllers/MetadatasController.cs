@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
+    [Area("meta")]
     [Authorize]
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]

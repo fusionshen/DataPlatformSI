@@ -1,11 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using DataPlatformSI.DataLayer.Context;
 using DataPlatformSI.ViewModels.Identity.Settings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -16,12 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.Swagger;
 using DataPlatformSI.IocConfig;
 using DNTCommon.Web.Core;
 using DataPlatformSI.Services.Identity.Logger;
 using DNTCaptcha.Core;
-using DataPlatformSI.Services.Contracts.Identity;
 
 namespace DataPlatformSI.WebAPI
 {
@@ -52,10 +46,9 @@ namespace DataPlatformSI.WebAPI
 
             services.AddMvc(options =>
             {
-                options.UseYeKeModelBinder();
                 options.AllowEmptyInputInBodyModelBinding = true;
                 // options.Filters.Add(new NoBrowserCacheAttribute());
-                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                //options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()); //自动反伪
             }).AddJsonOptions(jsonOptions =>
             {
                 jsonOptions.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;

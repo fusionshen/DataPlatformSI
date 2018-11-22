@@ -14,9 +14,9 @@ using DataPlatformSI.Services.Identity;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
+    [Authorize(Roles = ConstantRoles.Admin)]
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
-    [Authorize(Roles = ConstantRoles.Admin)]
     public class MyProtectedAdminApiController : Controller
     {
         private readonly IApplicationUserManager _userManager;

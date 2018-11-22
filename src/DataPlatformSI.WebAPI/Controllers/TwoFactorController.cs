@@ -112,9 +112,8 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="model">期望输入</param>
         /// <returns>期望输出</returns>
-        [HttpPost("[action]")]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         public async Task<IActionResult> VerifyCode(VerifyCodeViewModel model)
         {
             // The following code protects for brute force attacks against the two factor codes.

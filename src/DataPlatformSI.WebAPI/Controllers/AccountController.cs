@@ -89,7 +89,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="returnUrl">跳转的路由</param>
         /// <returns>token与其过期时间</returns>
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody]  LoginViewModel loginUser, string returnUrl = null)
         {
@@ -183,7 +182,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="jsonBody">刷新token所需信息</param>
         /// <returns>token与其过期时间</returns>
         [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
         [HttpPost("[action]")]
         public async Task<IActionResult> RefreshToken([FromBody]JToken jsonBody)
         {
@@ -214,7 +212,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="newPassword">新密码</param>
         /// <returns>是否成功</returns>
         [Authorize]
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ValidatePassword(string newPassword)
         {
@@ -230,7 +228,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">修改密码所需信息</param>
         /// <returns>是否修改成功</returns>
         [Authorize]
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             var user = await _userManager.GetCurrentUserAsync();
@@ -282,7 +280,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="email">账户邮箱</param>
         /// <returns>验证结果</returns>
         [AllowAnonymous]
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ValidatePasswordByEmail(string password, string email)
         {
@@ -304,7 +302,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns>发送密码重置邮件</returns>
         [AllowAnonymous]
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -337,7 +334,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns>重置结果</returns>
         [AllowAnonymous]
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -358,7 +354,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="email">邮箱</param>
         /// <returns>期望返回</returns>
         [AllowAnonymous]
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ValidateUsername(string username, string email)
         {
@@ -374,7 +370,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="username">用户名</param>
         /// <returns>期待返回</returns>
         [AllowAnonymous]
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ValidatePasswordByUsername(string password, string username)
         {
@@ -390,7 +386,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="code">验证码</param>
         /// <returns>期望返回</returns>
         [AllowAnonymous]
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -415,7 +411,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns>期望返回</returns>
         [AllowAnonymous]
         [HttpPost("[action]")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             var user = new User
