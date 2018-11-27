@@ -1047,10 +1047,11 @@ namespace DataPlatformSI.Services.Contracts.Identity
 
         Task<byte[]> GetEmailImageAsync(int? userId);
 
-        Task<PagedUsersListViewModel> GetPagedUsersListAsync(
-                    int pageNumber, int recordsPerPage,
-                    string sortByField, SortOrder sortOrder,
-                    bool showAllUsers);
+        Task<PagedUsersListViewModel> GetPagedUsersListAsync(int pageNumber, int recordsPerPage, string sortByField, SortOrder sortOrder, bool showAllUsers);
+
+        Task<PagedUsersListViewModel> GetPagedUsersListAsync(SearchUsersViewModel model, int pageNumber);
+
+        Task<List<User>> GetUserListAsync();
 
         Task<User> FindByIdIncludeUserRolesAsync(int userId);
 
@@ -1058,7 +1059,6 @@ namespace DataPlatformSI.Services.Contracts.Identity
 
         Task<IdentityResult> AddOrUpdateUserRolesAsync(int userId, IList<int> selectedRoleIds, Action<User> action = null);
 
-        Task<PagedUsersListViewModel> GetPagedUsersListAsync(SearchUsersViewModel model, int pageNumber);
 
 
         #endregion

@@ -37,12 +37,12 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
 
         /// <summary>
-        /// 获取列表
+        /// 获取分页列表
         /// </summary>
         /// <param name="page"></param>
         /// <param name="field"></param>
         /// <param name="order"></param>
-        /// <returns></returns>
+        /// <returns>期望返回</returns>
         [HttpGet]
         public async Task<IActionResult> Get(int? page = 1, string field = "Id", SortOrder order = SortOrder.Ascending)
         {
@@ -58,6 +58,17 @@ namespace DataPlatformSI.WebAPI.Controllers
             model.Paging.ShowFirstLast = true;
             return Json(model);
         }
+
+        /// <summary>
+        /// 获取所有用户列表
+        /// </summary>
+        /// <returns>期望返回</returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetUserList()
+        {
+            return Json(await _userManager.GetUserListAsync());
+        }
+
 
         /// <summary>
         /// 激活邮件确认

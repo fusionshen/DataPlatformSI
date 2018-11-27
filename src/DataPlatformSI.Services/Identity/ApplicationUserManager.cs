@@ -490,6 +490,11 @@ namespace DataPlatformSI.Services.Identity
             return await UpdateSecurityStampAsync(user);
         }
 
+        public async Task<List<User>> GetUserListAsync()
+        {
+            return await _users.Include(x => x.Roles).ToListAsync();
+        }
+
         #endregion
     }
 }

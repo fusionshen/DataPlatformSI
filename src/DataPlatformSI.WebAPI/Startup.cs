@@ -52,6 +52,7 @@ namespace DataPlatformSI.WebAPI
             }).AddJsonOptions(jsonOptions =>
             {
                 jsonOptions.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                jsonOptions.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
