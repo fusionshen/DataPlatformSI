@@ -35,7 +35,7 @@ namespace DataPlatformSI.MSTests
             services.AddEntityFrameworkInMemoryDatabase().AddDbContext<ApplicationDbContext>(ServiceLifetime.Scoped);
 
             // Adds all of the ASP.NET Core Identity related services and configurations at once.
-            services.AddCustomIdentityServices();
+            services.AddCustomIdentityServices("");
 
             services.AddDNTCommonWeb();
             services.AddCloudscribePagination();

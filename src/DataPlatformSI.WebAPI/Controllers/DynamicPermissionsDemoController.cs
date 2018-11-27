@@ -1,19 +1,19 @@
-﻿using DataPlatformSI.Services.Identity;
-using DataPlatformSI.ViewModels.Identity;
-using DNTBreadCrumb.Core;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using DataPlatformSI.Services.Identity;
+using DataPlatformSI.ViewModels.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
     [Authorize(Policy = ConstantPolicies.DynamicPermission)]
-    [DisplayName("DynamicPermissionsTestController")]
-    public class DynamicPermissionsTestController : Controller
+    [DisplayName("DynamicPermissionsDemoController")]
+    public class DynamicPermissionsDemoController : Controller
     {
         [HttpPost]
         public IActionResult Index([FromBody]RoleViewModel model)
@@ -46,3 +46,4 @@ namespace DataPlatformSI.WebAPI.Controllers
         }
     }
 }
+

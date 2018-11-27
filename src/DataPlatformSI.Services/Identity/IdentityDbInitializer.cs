@@ -111,7 +111,12 @@ namespace DataPlatformSI.Services.Identity
             var adminRole = await _roleManager.FindByNameAsync(roleName);
             if (adminRole == null)
             {
-                adminRole = new Role(roleName);
+                //adminRole = new Role(roleName);
+                adminRole = new Role(roleName)
+                {
+                    DisplayName = "管理员",
+                    Description = "现阶段超级用户"
+                };
                 var adminRoleResult = await _roleManager.CreateAsync(adminRole);
                 if (adminRoleResult == IdentityResult.Failed())
                 {

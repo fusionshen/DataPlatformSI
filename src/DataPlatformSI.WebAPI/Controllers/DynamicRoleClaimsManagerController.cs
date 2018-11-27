@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [Authorize(Roles = ConstantRoles.Admin)]
+    [Route("api/[controller]")]
     public class DynamicRoleClaimsManagerController : Controller
     {
         private readonly IMvcActionsDiscoveryService _mvcActionsDiscoveryService;
@@ -53,7 +53,6 @@ namespace DataPlatformSI.WebAPI.Controllers
             });
         }
 
-        [AllowAnonymous]
         [HttpGet("[action]")]
         public IActionResult GetPermissionList()
         {
