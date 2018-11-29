@@ -9,7 +9,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(ConcurrencyFailure),
-                Description = "رکورد جاری پیشتر ویرایش شده‌است و تغییرات شما آن‌را بازنویسی خواهد کرد."
+                Description = "当前记录已经过编辑，您的更改将被重写"
             };
         }
 
@@ -18,7 +18,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(DefaultError),
-                Description = "خطایی رخ داده‌است."
+                Description = "发生错误"
             };
         }
 
@@ -27,7 +27,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(DuplicateEmail),
-                Description = string.Format("ایمیل '{0}' هم اکنون مورد استفاده است.", email)
+                Description = string.Format("邮箱{0}已被注册", email)
             };
         }
 
@@ -36,7 +36,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(DuplicateRoleName),
-                Description = string.Format("نقش '{0}' هم اکنون مورد استفاده‌است.", role)
+                Description = string.Format("{0}角色已经存在", role)
             };
         }
 
@@ -45,7 +45,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(DuplicateUserName),
-                Description = string.Format("نام کاربری '{0}' هم اکنون مورد استفاده‌است.", userName)
+                Description = string.Format("用户名{0}已被注册", userName)
             };
         }
 
@@ -54,7 +54,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(InvalidEmail),
-                Description = string.Format("ایمیل '{0}' معتبر نیست.", email)
+                Description = string.Format("邮箱{0}格式错误", email)
             };
         }
 
@@ -63,7 +63,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(InvalidRoleName),
-                Description = string.Format("نقش '{0}' معتبر نیست.", role)
+                Description = string.Format("无效的{0}角色名", role)
             };
         }
 
@@ -72,7 +72,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(InvalidToken),
-                Description = "توکن غیر معتبر."
+                Description = "无效令牌"
             };
         }
 
@@ -81,7 +81,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(InvalidUserName),
-                Description = string.Format("نام کاربری '{0}' معتبر نیست و تنها می‌تواند حاوی حروف و یا ارقام باشد.", userName)
+                Description = string.Format("用户名{0}无效，只能包含字母或数字", userName)
             };
         }
 
@@ -90,7 +90,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(LoginAlreadyAssociated),
-                Description = "این کاربر پیشتر اضافه شده‌است."
+                Description = "此用户已添加"
             };
         }
 
@@ -99,7 +99,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(PasswordMismatch),
-                Description = "کلمه‌ی عبور نامعتبر."
+                Description = "密码无效"
             };
         }
 
@@ -108,7 +108,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(PasswordRequiresDigit),
-                Description = "کلمه‌ی عبور باید حداقل دارای یک رقم بین 0 تا 9 باشد."
+                Description = "密码必须至少含有一个0到9的数字"
             };
         }
 
@@ -117,7 +117,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(PasswordRequiresLower),
-                Description = "کلمه‌ی عبور باید حداقل دارای یک حرف کوچک انگلیسی باشد."
+                Description = "密码必须至少有一个小英文字母"
             };
         }
 
@@ -126,7 +126,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(PasswordRequiresNonAlphanumeric),
-                Description = "کلمه‌ی عبور باید حداقل دارای یک حرف خارج از حروف الفبای انگلیسی و همچنین اعداد باشد."
+                Description = "密码必须至少有一个英文字母以及数字"
             };
         }
 
@@ -135,7 +135,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(PasswordRequiresUpper),
-                Description = "کلمه‌ی عبور باید حداقل دارای یک حرف بزرگ انگلیسی باشد."
+                Description = "密码必须至少有一个大写的英文字母"
             };
         }
 
@@ -144,7 +144,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(PasswordTooShort),
-                Description = string.Format("کلمه‌ی عبور باید حداقل {0} حرف باشد.", length)
+                Description = string.Format("密码必须至少为{0}位", length)
             };
         }
 
@@ -153,7 +153,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(UserAlreadyHasPassword),
-                Description = "کلمه‌ی عبور کاربر پیشتر تنظیم شده‌است."
+                Description = "用户密码已设置"
             };
         }
 
@@ -162,7 +162,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(UserAlreadyInRole),
-                Description = string.Format("کاربر هم اکنون دارای نقش '{0}' است.", role)
+                Description = string.Format("用户已经拥有{0}角色", role)
             };
         }
 
@@ -171,7 +171,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(UserLockoutNotEnabled),
-                Description = "قفل شدن اکانت برای این کاربر تنظیم نشده‌است."
+                Description = "未为此用户配置帐户锁定"
             };
         }
 
@@ -180,7 +180,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(UserNotInRole),
-                Description = "کاربر دارای نقش '{0}' نیست."
+                Description = $"用户没有角色{role}"
             };
         }
 
@@ -189,7 +189,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(PasswordRequiresUniqueChars),
-                Description = "کلمه‌ی عبور باید حداقل داراى {0} حرف متفاوت باشد."
+                Description = $"密码必须至少有{uniqueChars}个字符."
             };
         }
 
@@ -198,7 +198,7 @@ namespace DataPlatformSI.Services.Identity
             return new IdentityError
             {
                 Code = nameof(RecoveryCodeRedemptionFailed),
-                Description = "بازیابى با شکست مواجه شد."
+                Description = "恢复失败"
             };
         }
     }

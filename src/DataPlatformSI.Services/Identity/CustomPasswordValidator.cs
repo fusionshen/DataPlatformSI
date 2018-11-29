@@ -46,7 +46,7 @@ namespace DataPlatformSI.Services.Identity
                 errors.Add(new IdentityError
                 {
                     Code = "PasswordIsNotSet",
-                    Description = "لطفا کلمه‌ی عبور را تکمیل کنید."
+                    Description = "请填写密码"
                 });
                 return IdentityResult.Failed(errors.ToArray());
             }
@@ -56,7 +56,7 @@ namespace DataPlatformSI.Services.Identity
                 errors.Add(new IdentityError
                 {
                     Code = "UserNameIsNotSet",
-                    Description = "لطفا نام کاربری را تکمیل کنید."
+                    Description = "请填写用户名"
                 });
                 return IdentityResult.Failed(errors.ToArray());
             }
@@ -71,7 +71,7 @@ namespace DataPlatformSI.Services.Identity
                 errors.Add(new IdentityError
                 {
                     Code = "PasswordContainsUserName",
-                    Description = "کلمه‌ی عبور نمی‌تواند حاوی قسمتی از نام کاربری باشد."
+                    Description = "密码不能包含用户名的一部分"
                 });
                 return IdentityResult.Failed(errors.ToArray());
             }
@@ -81,7 +81,7 @@ namespace DataPlatformSI.Services.Identity
                 errors.Add(new IdentityError
                 {
                     Code = "PasswordIsNotSafe",
-                    Description = "کلمه‌ی عبور وارد شده به سادگی قابل حدس زدن است."
+                    Description = "输入的密码太简单"
                 });
                 return IdentityResult.Failed(errors.ToArray());
             }
@@ -91,7 +91,7 @@ namespace DataPlatformSI.Services.Identity
                 errors.Add(new IdentityError
                 {
                     Code = "IsPreviouslyUsedPassword",
-                    Description = "لطفا کلمه‌ی عبور دیگری را انتخاب کنید. این کلمه‌ی عبور پیشتر توسط شما استفاده شده‌است و تکراری می‌باشد."
+                    Description = "密码已被使用"
                 });
                 return IdentityResult.Failed(errors.ToArray());
             }

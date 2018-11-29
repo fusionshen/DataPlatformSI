@@ -55,7 +55,7 @@ namespace DataPlatformSI.Services.Identity
                     errors.Add(new IdentityError
                     {
                         Code = "EmailIsNotSet",
-                        Description = "لطفا اطلاعات ایمیل را تکمیل کنید."
+                        Description = "请填写邮箱信息."
                     });
                 }
                 return; // base.ValidateAsync() will cover this case
@@ -66,7 +66,7 @@ namespace DataPlatformSI.Services.Identity
                 errors.Add(new IdentityError
                 {
                     Code = "BadEmailDomainError",
-                    Description = "لطفا یک ایمیل پروایدر معتبر را وارد نمائید."
+                    Description = "请输入有效的邮箱"
                 });
             }
         }
@@ -81,27 +81,27 @@ namespace DataPlatformSI.Services.Identity
                     errors.Add(new IdentityError
                     {
                         Code = "UserIsNotSet",
-                        Description = "لطفا اطلاعات کاربری را تکمیل کنید."
+                        Description = "请填写用户信息"
                     });
                 }
                 return;  // base.ValidateAsync() will cover this case
             }
 
-            if (userName.IsNumeric() || userName.ContainsNumber())
-            {
-                errors.Add(new IdentityError
-                {
-                    Code = "BadUserNameError",
-                    Description = "نام کاربری وارد شده نمی‌تواند حاوی اعداد باشد."
-                });
-            }
+            //if (userName.IsNumeric() || userName.ContainsNumber())
+            //{
+            //    errors.Add(new IdentityError
+            //    {
+            //        Code = "BadUserNameError",
+            //        Description = "输入的用户名不能包含数字"
+            //    });
+            //}
 
             if (userName.HasConsecutiveChars())
             {
                 errors.Add(new IdentityError
                 {
                     Code = "BadUserNameError",
-                    Description = "نام کاربری وارد شده معتبر نیست."
+                    Description = "用户名无效"
                 });
             }
         }

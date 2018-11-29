@@ -415,8 +415,12 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns>期望返回</returns>
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(useHtmlNewLine: false));
+            }
             var user = new User
             {
                 UserName = model.Username,
@@ -448,7 +452,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 }
             }
 
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            return BadRequest(result.DumpErrors(useHtmlNewLine: false));
 
         }
     }
