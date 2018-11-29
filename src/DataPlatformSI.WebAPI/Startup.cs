@@ -114,21 +114,23 @@ namespace DataPlatformSI.WebAPI
                     {
                         context.Response.StatusCode = 401;
                         context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new
-                        {
-                            State = 401,
-                            Msg = "token expired"
-                        }));
+                        //await context.Response.WriteAsync(JsonConvert.SerializeObject(new
+                        //{
+                        //    state = 401,
+                        //    message = "token expired"
+                        //}));
+                        await context.Response.WriteAsync("token expired");
                     }
                     else if (error != null && error.Error != null)
                     {
                         context.Response.StatusCode = 500;
                         context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new
-                        {
-                            State = 500,
-                            Msg = error.Error.Message
-                        }));
+                        //await context.Response.WriteAsync(JsonConvert.SerializeObject(new
+                        //{
+                        //    state = 500,
+                        //    message = error.Error.Message
+                        //}));
+                        await context.Response.WriteAsync(error.Error.Message);
                     }
                     else
                     {

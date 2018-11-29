@@ -189,7 +189,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost("[action]"), ValidateAntiForgeryToken]
+        [HttpPost("[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> SearchUsers(SearchUsersViewModel model)
         {

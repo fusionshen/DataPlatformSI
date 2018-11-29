@@ -18,8 +18,14 @@ namespace DataPlatformSI.Entities.Identity
             Name = name;
         }
 
-        public Role(string name, string description)
+        public Role(string name,string displayName) 
             : this(name)
+        {
+            DisplayName = displayName;
+        }
+
+        public Role(string name, string displayName, string description)
+            : this(name,displayName)
         {
             Description = description;
         }

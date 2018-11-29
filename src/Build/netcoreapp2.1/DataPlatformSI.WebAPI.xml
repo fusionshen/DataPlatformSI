@@ -209,6 +209,13 @@
             <param name="model"></param>
             <returns>期望返回</returns>
         </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.Get(System.Int32)">
+            <summary>
+            获取单个角色
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.RolesController.DeleteRole(DataPlatformSI.ViewModels.Identity.RoleViewModel)">
             <summary>
             删除角色
@@ -293,7 +300,13 @@
             <param name="page"></param>
             <param name="field"></param>
             <param name="order"></param>
-            <returns></returns>
+            <returns>期望返回</returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.GetUserList">
+            <summary>
+            获取所有用户列表
+            </summary>
+            <returns>期望返回</returns>
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.ActivateUserEmailStat(System.Int32)">
             <summary>

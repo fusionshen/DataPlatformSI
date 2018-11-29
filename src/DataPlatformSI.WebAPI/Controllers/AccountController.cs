@@ -92,21 +92,25 @@ namespace DataPlatformSI.WebAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody]  LoginViewModel loginUser, string returnUrl = null)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var user = await _userManager.FindByNameAsync(loginUser.Username);
             if (user == null)
             {
-                return NotFound();
+                return BadRequest("该用户不存在");
             }
 
             if (!user.IsActive)
             {
-                return Json("用户未被激活");
+                return BadRequest("用户未被激活");
             }
 
             if (_siteOptions.Value.EnableEmailConfirmation &&
                 !await _userManager.IsEmailConfirmedAsync(user))
             {
-                return Json("新用户未被邮件确认");
+                return BadRequest("新用户未被邮件确认");
             }
 
             var result = await _signInManager.PasswordSignInAsync(
@@ -136,16 +140,16 @@ namespace DataPlatformSI.WebAPI.Controllers
             if (result.IsLockedOut)
             {
                 _logger.LogWarning(2, $"用户:{loginUser.Username}被锁定");
-                return Json("用户被锁定");
+                return BadRequest("用户被锁定");
 
             }
 
             if (result.IsNotAllowed)
             {
-                return Json("用户被禁");
+                return BadRequest("用户被禁");
             }
 
-            return BadRequest("发生一些莫名错误");
+            return BadRequest("密码有误");
         }
 
         /// <summary>

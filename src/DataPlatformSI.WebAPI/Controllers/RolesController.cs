@@ -102,10 +102,31 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">新增角色实体</param>
         /// <returns>期望返回</returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddRole(RoleViewModel model)
+        public async Task<IActionResult> AddRole([FromBody] RoleViewModel model)
         {
-            var result = await _roleManager.CreateAsync(new Role(model.Name));
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(false));
+            }
+            var role = new Role(model.Name, model.DisplayName, model.Description);
+            var result = await _roleManager.CreateAsync(role);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: true));
+            }
+            if (model.ActionIds.Count() != 0)
+            {
+                result = await _roleManager.AddOrUpdateRoleClaimsAsync(
+                    roleId: role.Id,
+                    roleClaimType: ConstantPolicies.DynamicPermissionClaimType,
+                    selectedRoleClaimValues: model.ActionIds);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                }
+            }
+
+            return CreatedAtAction(nameof(Get), new { id = role.Id }, role);
         }
 
         /// <summary>
@@ -115,10 +136,50 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns>期望返回</returns>
         // POST: api/Roles
         [HttpPost]
-        public async Task<IActionResult> Post(RoleViewModel model)
+        public async Task<IActionResult> Post([FromBody] RoleViewModel model)
         {
-            var result = await _roleManager.CreateAsync(new Role(model.Name));
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(false));
+            }
+            var role = new Role(model.Name,model.DisplayName,model.Description);
+            var result = await _roleManager.CreateAsync(role);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: true));
+            }
+            if (model.ActionIds.Count() != 0)
+            {
+                result = await _roleManager.AddOrUpdateRoleClaimsAsync(
+                    roleId: role.Id,
+                    roleClaimType: ConstantPolicies.DynamicPermissionClaimType,
+                    selectedRoleClaimValues: model.ActionIds);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                }
+            }
+            
+            return CreatedAtAction(nameof(Get), new { id = role.Id }, role);
+            //return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: false));
+        }
+
+        /// <summary>
+        /// 获取单个角色
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        // GET: api/Roles/5
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var role = await _roleManager.FindByIdAsync(id.ToString());
+            if (role == null)
+            {
+                return NotFound();
+            }
+            return Ok(role);
         }
 
         /// <summary>
