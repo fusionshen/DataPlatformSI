@@ -62,17 +62,40 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">角色实体</param>
         /// <returns>期望返回</returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> EditRole(RoleViewModel model)
+        public async Task<IActionResult> EditRole([FromBody] RoleViewModel model)
         {
-     
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(false));
+            }
             var role = await _roleManager.FindByIdAsync(model.Id);
             if (role == null)
             {
                 return BadRequest(RoleNotFound);
             }
-            role.Name = model.Name;
+            if (role.NormalizedName != "ADMIN")
+            {
+                role.Name = model.Name;
+            }
+            role.DisplayName = model.DisplayName;
+            role.Description = model.Description;
             var result = await _roleManager.UpdateAsync(role);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+            if (role.NormalizedName != "ADMIN")
+            {
+                result = await _roleManager.AddOrUpdateRoleClaimsAsync(
+                   roleId: role.Id,
+                   roleClaimType: ConstantPolicies.DynamicPermissionClaimType,
+                   selectedRoleClaimValues: model.ActionIds);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
+                }
+            }
+            return Json(await _roleManager.FindRoleIncludeRoleClaimsAsync(role.Id));
         }
 
         /// <summary>
@@ -85,15 +108,39 @@ namespace DataPlatformSI.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] RoleViewModel model)
         {
-
-            var role = await _roleManager.FindByIdAsync(model.Id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(false));
+            }
+            var role = await _roleManager.FindByIdAsync(id.ToString());
             if (role == null)
             {
-                return Json(RoleNotFound);
+                return BadRequest(RoleNotFound);
             }
-            role.Name = model.Name;
+            if (role.NormalizedName != "ADMIN")
+            {
+                role.Name = model.Name;
+            }
+            role.DisplayName = model.DisplayName;
+            role.Description = model.Description;
             var result = await _roleManager.UpdateAsync(role);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+            if (role.NormalizedName != "ADMIN")
+            {
+                result = await _roleManager.AddOrUpdateRoleClaimsAsync(
+                    roleId: role.Id,
+                    roleClaimType: ConstantPolicies.DynamicPermissionClaimType,
+                    selectedRoleClaimValues: model.ActionIds);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
+                }
+            }
+            return Json(await _roleManager.FindRoleIncludeRoleClaimsAsync(id));
+            //return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: false));
         }
 
         /// <summary>
@@ -112,7 +159,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             var result = await _roleManager.CreateAsync(role);
             if (!result.Succeeded)
             {
-                return BadRequest(result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
             }
             if (model.ActionIds.Count() != 0)
             {
@@ -122,7 +169,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                     selectedRoleClaimValues: model.ActionIds);
                 if (!result.Succeeded)
                 {
-                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
                 }
             }
 
@@ -146,7 +193,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             var result = await _roleManager.CreateAsync(role);
             if (!result.Succeeded)
             {
-                return BadRequest(result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
             }
             if (model.ActionIds.Count() != 0)
             {
@@ -156,7 +203,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                     selectedRoleClaimValues: model.ActionIds);
                 if (!result.Succeeded)
                 {
-                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
                 }
             }
             
@@ -174,7 +221,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var role = await _roleManager.FindByIdAsync(id.ToString());
+            var role = await _roleManager.FindRoleIncludeRoleClaimsAsync(id);
             if (role == null)
             {
                 return NotFound();
@@ -188,16 +235,23 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">所需实体</param>
         /// <returns>期望返回</returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> DeleteRole(RoleViewModel model)
+        public async Task<IActionResult> DeleteRole([FromBody] RoleViewModel model)
         {
             var role = await _roleManager.FindByIdAsync(model.Id);
             if (role == null)
             {
-                return Json(RoleNotFound);
+                return BadRequest(RoleNotFound);
+            }
+            if (role.NormalizedName == "ADMIN")
+            {
+                return BadRequest("ADMIN ROLE CANT BE REMOVED");
             }
             var result = await _roleManager.DeleteAsync(role);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
-
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+            return NoContent();
         }
 
         /// <summary>
@@ -205,17 +259,34 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="id">角色id</param>
         /// <returns></returns>
-        // DELETE: api/ApiWithActions/5
+        // DELETE: api/Roles/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());
             if (role == null)
             {
-                return Json(RoleNotFound);
+                return BadRequest(RoleNotFound);
             }
+            if (role.NormalizedName == "ADMIN")
+            {
+                return BadRequest("ROLE ADMIN CANT BE REMOVED");
+            }
+            //result = await _roleManager.AddOrUpdateRoleClaimsAsync(
+            //        roleId: role.Id,
+            //        roleClaimType: ConstantPolicies.DynamicPermissionClaimType,
+            //        selectedRoleClaimValues: null);
+            //if (!result.Succeeded)
+            //{
+            //    return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
+            //}
             var result = await _roleManager.DeleteAsync(role);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+            return NoContent();
+            //return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: false));
         }
 
         /// <summary>

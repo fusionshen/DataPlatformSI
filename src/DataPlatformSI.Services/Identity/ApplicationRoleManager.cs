@@ -210,7 +210,7 @@ namespace DataPlatformSI.Services.Identity
                 return IdentityResult.Failed(new IdentityError
                 {
                     Code = "RoleNotFound",
-                    Description = "role is not found."
+                    Description = "该角色不存在."
                 });
             }
 
