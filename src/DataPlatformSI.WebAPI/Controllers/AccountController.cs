@@ -118,11 +118,12 @@ namespace DataPlatformSI.WebAPI.Controllers
                                     loginUser.Password,
                                     loginUser.RememberMe,
                                     lockoutOnFailure: true);
+
             if (result.Succeeded)
             {
                 _logger.LogInformation(1, $"{loginUser.Username} logged in.");
 
-                var (accessToken, accessTokenExpire,refreshToken,refreshTokenExpire, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
+                var (accessToken, accessTokenExpire, refreshToken, refreshTokenExpire, claims) = await _tokenStoreService.CreateJwtTokens(user, refreshTokenSource: null);
 
                 _antiforgery.RegenerateAntiForgeryCookies(claims);
 
@@ -426,7 +427,8 @@ namespace DataPlatformSI.WebAPI.Controllers
                 UserName = model.Username,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                SerialNumber = Guid.NewGuid().ToString("N")
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
