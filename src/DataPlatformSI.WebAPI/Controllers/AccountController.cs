@@ -452,6 +452,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                             MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
                         });
                 }
+                return Ok();
             }
 
             return BadRequest(result.DumpErrors(useHtmlNewLine: false));

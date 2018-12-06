@@ -6,8 +6,8 @@ namespace DataPlatformSI.ViewModels.Identity
     public class RegisterViewModel
     {
         [Required(ErrorMessage = "邮箱必填")]
-        //[Remote("ValidateUsername", "Register",
-        //    AdditionalFields = nameof(Username) + "," + ViewModelConstants.AntiForgeryToken, HttpMethod = "POST")]
+        [Remote("ValidateUsername", "Account",
+            AdditionalFields = nameof(Username) + "," + ViewModelConstants.AntiForgeryToken, HttpMethod = "POST")]
         [EmailAddress(ErrorMessage = "邮箱格式不正确")]
         [Display(Name = "邮件")]
         public string Email { get; set; }
