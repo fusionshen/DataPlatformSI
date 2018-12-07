@@ -275,7 +275,11 @@ namespace DataPlatformSI.WebAPI.Controllers
         public IActionResult GetUserInfo()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1 ,2,3}, Roles = new List<string> { ConstantRoles.Admin } });
+            if (claimsIdentity.HasClaim(ClaimTypes.Role,ConstantRoles.Admin))
+            {
+                return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1,2,3,4 }, Roles = new List<string> { ConstantRoles.Admin } });
+            }
+            return Json(new { Username = claimsIdentity.Name });
         }
 
         /// <summary>
