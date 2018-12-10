@@ -277,7 +277,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             var claimsIdentity = User.Identity as ClaimsIdentity;
             if (claimsIdentity.HasClaim(ClaimTypes.Role,ConstantRoles.Admin))
             {
-                return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1,2,3,4 }, Roles = new List<string> { ConstantRoles.Admin } });
+                return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1,2,3 }, Roles = new List<string> { ConstantRoles.Admin } });
             }
             return Json(new { Username = claimsIdentity.Name });
         }
