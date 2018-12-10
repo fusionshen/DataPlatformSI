@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataPlatformSI.Entities.Identity;
 using System.Data.SqlClient;
 using DataPlatformSI.ViewModels.Identity;
+using System;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
@@ -271,6 +272,47 @@ namespace DataPlatformSI.WebAPI.Controllers
 
             var fileContents = await _userManager.GetEmailImageAsync(userId);
             return new FileContentResult(fileContents, "image/png");
+        }
+
+
+        /// <summary>
+        /// 新增User
+        /// </summary>
+        /// <param name="model">新增所需</param>
+        /// <returns>期望返回</returns>
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] UserViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(useHtmlNewLine: false));
+            }
+            var user = new User
+            {
+                UserName = model.Username,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                SerialNumber = Guid.NewGuid().ToString("N"),
+                PhoneNumber = model.PhoneNumber,
+                BirthDate = model.BirthDate,
+                Location = model.Location
+            };
+            var result = await _userManager.CreateAsync(user, "888888");
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+            if (model.RoleIds.Length !=0 )
+            {
+                result = await _userManager.AddOrUpdateUserRolesAsync(user.Id, model.RoleIds, u => user = u);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
+                }
+            }
+            //return result.Succeeded ? await ReturnUserCard(user) : BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+            return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
         }
     }
 }

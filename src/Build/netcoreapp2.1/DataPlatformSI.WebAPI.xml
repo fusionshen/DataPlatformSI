@@ -375,6 +375,13 @@
             <param name="userId">用户Id</param>
             <returns>期望返回</returns>
         </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.Post(DataPlatformSI.ViewModels.Identity.UserViewModel)">
+            <summary>
+            新增User
+            </summary>
+            <param name="model">新增所需</param>
+            <returns>期望返回</returns>
+        </member>
         <member name="T:DataPlatformSI.WebAPI.FunctionsController">
             <summary>
             Provides unbound, utility functions.

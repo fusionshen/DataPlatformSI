@@ -487,6 +487,7 @@ namespace DataPlatformSI.Services.Identity
             {
                 return result;
             }
+            //SerialNumber
             return await UpdateSecurityStampAsync(user);
         }
 
