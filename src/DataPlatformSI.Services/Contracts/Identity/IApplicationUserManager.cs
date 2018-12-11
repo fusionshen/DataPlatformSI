@@ -1000,7 +1000,7 @@ namespace DataPlatformSI.Services.Contracts.Identity
 
         #region CustomMethods
 
-        Task<string> GetSerialNumberAsync(int userId);
+        Task<string> GetSecurityStampAsync(int userId);
         Task<User> FindUserAsync(string username, string password);
         Task<User> FindUserAsync(int userId);
         Task UpdateUserLastActivityDateAsync(int userId);

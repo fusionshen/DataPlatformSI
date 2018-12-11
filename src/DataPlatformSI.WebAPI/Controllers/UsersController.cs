@@ -225,7 +225,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="userId">用户Id</param>
         /// <returns>期望返回</returns>
         [AllowAnonymous]
-        [HttpGet("{userId}")]
+        [HttpGet("{userId?}")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Get(int? userId)
         {
@@ -293,7 +293,6 @@ namespace DataPlatformSI.WebAPI.Controllers
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                SerialNumber = Guid.NewGuid().ToString("N"),
                 PhoneNumber = model.PhoneNumber,
                 BirthDate = model.BirthDate,
                 Location = model.Location

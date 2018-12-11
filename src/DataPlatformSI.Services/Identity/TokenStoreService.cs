@@ -176,7 +176,7 @@ namespace DataPlatformSI.Services.Identity
                 new Claim(ClaimTypes.Name, user.UserName, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
                 new Claim("DisplayName", user.DisplayName, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
                 // to invalidate the cookie
-                new Claim(ClaimTypes.SerialNumber, user.SerialNumber, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
+                new Claim(ClaimTypes.SerialNumber, user.SecurityStamp, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer),
                 // custom data
                 new Claim(ClaimTypes.UserData, user.Id.ToString(), ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer)
             };

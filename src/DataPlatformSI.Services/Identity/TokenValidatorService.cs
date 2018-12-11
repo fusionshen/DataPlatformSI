@@ -52,7 +52,7 @@ namespace DataPlatformSI.Services.Identity
             }
 
             var user = await _userManager.FindUserAsync(userId);
-            if (user == null || user.SerialNumber != serialNumberClaim.Value || !user.IsActive)
+            if (user == null || user.SecurityStamp != serialNumberClaim.Value || !user.IsActive)
             {
                 // user has changed his/her password/roles/stat/IsActive
                 context.Fail("This token is expired. Please login again.");

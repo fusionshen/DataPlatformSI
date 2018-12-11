@@ -431,8 +431,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 UserName = model.Username,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName,
-                SerialNumber = Guid.NewGuid().ToString("N")
+                LastName = model.LastName
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)

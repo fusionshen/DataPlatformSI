@@ -135,8 +135,7 @@ namespace DataPlatformSI.Services.Identity
                 Email = email,
                 EmailConfirmed = true,
                 IsEmailPublic = true,
-                LockoutEnabled = true,
-                SerialNumber = Guid.NewGuid().ToString("N")
+                LockoutEnabled = true
             };
             var adminUserResult = await _applicationUserManager.CreateAsync(adminUser, password);
             if (adminUserResult == IdentityResult.Failed())

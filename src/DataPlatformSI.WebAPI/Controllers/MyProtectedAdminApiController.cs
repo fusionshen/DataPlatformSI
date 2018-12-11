@@ -40,7 +40,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 Title = "Hello from My Protected Admin Api Controller! [Authorize(Roles = ConstantRoles.Admin)]",
                 Username = this.User.Identity.Name,
                 UserData = userId,
-                TokenSerialNumber = await _userManager.GetSerialNumberAsync(int.Parse(userId)),
+                TokenSecurityStamp = await _userManager.GetSecurityStampAsync(int.Parse(userId)),
                 Roles = claimsIdentity.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList()
             });
         }
