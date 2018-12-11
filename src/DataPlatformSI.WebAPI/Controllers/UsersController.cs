@@ -123,7 +123,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             User thisUser = null;
             var result = await _userManager.AddOrUpdateUserRolesAsync(
                 userId, roleIds, user => thisUser = user);
-            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
         }
 
         /// <summary>
@@ -312,6 +312,51 @@ namespace DataPlatformSI.WebAPI.Controllers
             }
             //return result.Succeeded ? await ReturnUserCard(user) : BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
             return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+        }
+
+        /// <summary>
+        /// 管理员修改用户
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="model">用户所需</param>
+        /// <returns>期望返回</returns>
+        // PUT: api/Users/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] UserViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(false));
+            }
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (user.UserName.ToUpper() != "ADMIN")
+            {
+                user.UserName = model.Username;
+            }
+            user.Email = model.Email;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.BirthDate = model.BirthDate;
+            user.Location = model.Location;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+            if (user.UserName.ToUpper() != "ADMIN")
+            {
+                result = await _userManager.AddOrUpdateUserRolesAsync(user.Id, model.RoleIds, u => user = u);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
+                }
+            }
+            return Json(user);
         }
     }
 }

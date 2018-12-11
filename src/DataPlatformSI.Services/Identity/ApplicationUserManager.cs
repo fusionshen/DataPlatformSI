@@ -403,7 +403,7 @@ namespace DataPlatformSI.Services.Identity
                 return IdentityResult.Failed(new IdentityError
                 {
                     Code = "UserNotFound",
-                    Description = "user is not found."
+                    Description = "不存在该用户"
                 });
             }
 
@@ -425,7 +425,7 @@ namespace DataPlatformSI.Services.Identity
                 return IdentityResult.Failed(new IdentityError
                 {
                     Code = "UserNotFound",
-                    Description = "user is not found."
+                    Description = "不存在该用户"
                 });
             }
 

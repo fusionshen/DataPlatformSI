@@ -382,6 +382,14 @@
             <param name="model">新增所需</param>
             <returns>期望返回</returns>
         </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.Put(System.Int32,DataPlatformSI.ViewModels.Identity.UserViewModel)">
+            <summary>
+            管理员修改用户
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="model">用户所需</param>
+            <returns>期望返回</returns>
+        </member>
         <member name="T:DataPlatformSI.WebAPI.FunctionsController">
             <summary>
             Provides unbound, utility functions.

@@ -145,7 +145,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">更改信息所需</param>
         /// <returns>期望返回</returns>
         [HttpPut]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Put(UserProfileViewModel model)
         {
             var pid = _protectionProviderService.Decrypt(model.Pid);
