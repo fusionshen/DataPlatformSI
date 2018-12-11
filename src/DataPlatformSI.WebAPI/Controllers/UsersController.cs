@@ -297,7 +297,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 BirthDate = model.BirthDate,
                 Location = model.Location
             };
-            var result = await _userManager.CreateAsync(user, "888888");
+            var result = await _userManager.CreateAsync(user, "safepass");
             if (!result.Succeeded)
             {
                 return BadRequest(result.DumpErrors(useHtmlNewLine: false));

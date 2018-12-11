@@ -87,7 +87,8 @@ namespace DataPlatformSI.Services.Identity
 
         public Task<List<Role>> GetAllCustomRolesAsync()
         {
-            return Roles.ToListAsync();
+            //return Roles.ToListAsync();
+            return Roles.Where(r => r.NormalizedName != ConstantRoles.Admin.ToUpper()).ToListAsync();
         }
 
         public Task<List<RoleAndUsersCountViewModel>> GetAllCustomRolesAndUsersCountListAsync()
