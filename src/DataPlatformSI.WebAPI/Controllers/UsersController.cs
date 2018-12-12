@@ -333,7 +333,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             {
                 return NotFound();
             }
-            if (user.UserName.ToUpper() != "ADMIN")
+            if (user.NormalizedUserName != "ADMIN")
             {
                 user.UserName = model.Username;
             }
@@ -348,7 +348,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             {
                 return BadRequest(result.DumpErrors(useHtmlNewLine: false));
             }
-            if (user.UserName.ToUpper() != "ADMIN")
+            if (user.NormalizedUserName != "ADMIN")
             {
                 result = await _userManager.AddOrUpdateUserRolesAsync(user.Id, model.RoleIds, u => user = u);
                 if (!result.Succeeded)
@@ -358,5 +358,32 @@ namespace DataPlatformSI.WebAPI.Controllers
             }
             return Json(user);
         }
+
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="id">用户id</param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound("user is not found");
+            }
+            if (user.NormalizedUserName == "ADMIN")
+            {
+                return BadRequest("USER ADMIN CANT BE REMOVED");
+            }
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+            return NoContent();
+            //return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: false));
+        }
+
     }
 }

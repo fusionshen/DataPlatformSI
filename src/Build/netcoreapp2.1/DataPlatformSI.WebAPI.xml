@@ -390,6 +390,13 @@
             <param name="model">用户所需</param>
             <returns>期望返回</returns>
         </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.Delete(System.Int32)">
+            <summary>
+            删除用户
+            </summary>
+            <param name="id">用户id</param>
+            <returns></returns>
+        </member>
         <member name="T:DataPlatformSI.WebAPI.FunctionsController">
             <summary>
             Provides unbound, utility functions.
