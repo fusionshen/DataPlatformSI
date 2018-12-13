@@ -272,14 +272,15 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns>用户信息</returns>
         [Authorize]
         [HttpGet("[action]"), HttpPost("[action]")]
-        public IActionResult GetUserInfo()
+        public async Task<IActionResult> GetUserInfo()
         {
+            var user = await _userManager.GetCurrentUserAsync();
             var claimsIdentity = User.Identity as ClaimsIdentity;
             if (claimsIdentity.HasClaim(ClaimTypes.Role,ConstantRoles.Admin))
             {
-                return Json(new { Username = claimsIdentity.Name, Apps = new List<int> { 1,2,3 }, Roles = new List<string> { ConstantRoles.Admin } });
+                return Json(new { user.Id, Username = claimsIdentity.Name, Apps = new List<int> { 1,2,3 }, Roles = new List<string> { ConstantRoles.Admin } });
             }
-            return Json(new { Username = claimsIdentity.Name });
+            return Json(new { user.Id, Username = claimsIdentity.Name });
         }
 
         /// <summary>

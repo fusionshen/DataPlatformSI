@@ -225,21 +225,21 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="userId">用户Id</param>
         /// <returns>期望返回</returns>
         [AllowAnonymous]
-        [HttpGet("{userId?}")]
+        [HttpGet("{userId}")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Get(int? userId)
+        public async Task<IActionResult> Get(int userId)
         {
-            if (!userId.HasValue && User.Identity.IsAuthenticated)
-            {
-                userId = User.Identity.GetUserId<int>();
-            }
+            //if (!userId.HasValue && User.Identity.IsAuthenticated)
+            //{
+            //    userId = User.Identity.GetUserId<int>();
+            //}
 
-            if (!userId.HasValue)
-            {
-                return NotFound();
-            }
+            //if (!userId.HasValue)
+            //{
+            //    return NotFound();
+            //}
 
-            var user = await _userManager.FindByIdIncludeUserRolesAsync(userId.Value);
+            var user = await _userManager.FindByIdIncludeUserRolesAsync(userId);
             if (user == null)
             {
                 return NotFound();

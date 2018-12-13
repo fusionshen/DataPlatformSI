@@ -361,7 +361,7 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.Get(System.Nullable{System.Int32})">
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.Get(System.Int32)">
             <summary>
             获得用户卡片
             </summary>
