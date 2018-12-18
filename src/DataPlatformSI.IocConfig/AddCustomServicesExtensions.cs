@@ -2,6 +2,8 @@
 using System.Security.Principal;
 using DataPlatformSI.DataLayer.Context;
 using DataPlatformSI.Entities.Identity;
+using DataPlatformSI.Services;
+using DataPlatformSI.Services.Contracts;
 using DataPlatformSI.Services.Contracts.Identity;
 using DataPlatformSI.Services.Identity;
 using DataPlatformSI.Services.Identity.Logger;
@@ -73,6 +75,9 @@ namespace DataPlatformSI.IocConfig
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<ITokenStoreService, TokenStoreService>();
             services.AddScoped<ITokenValidatorService, TokenValidatorService>();
+
+            services.AddScoped<IModuleService, ModuleService>();
+
 
             return services;
         }

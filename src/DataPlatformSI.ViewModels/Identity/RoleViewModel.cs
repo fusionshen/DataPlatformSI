@@ -13,6 +13,7 @@ namespace DataPlatformSI.ViewModels.Identity
 
         [Required(ErrorMessage = "角色名必填")]
         [Display(Name = "角色名")]
+        [StringLength(450)]
         public string Name { set; get; }
 
         [Required(ErrorMessage = "显示名称必填")]

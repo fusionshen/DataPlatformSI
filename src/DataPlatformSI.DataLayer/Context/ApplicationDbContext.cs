@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DataPlatformSI.Entities.Modules;
 
 namespace DataPlatformSI.DataLayer.Context
 {
@@ -152,6 +153,7 @@ namespace DataPlatformSI.DataLayer.Context
 
         public virtual DbSet<Category> Categories { set; get; }
         public virtual DbSet<Product> Products { set; get; }
+        public virtual DbSet<Module> Modules { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -176,6 +178,12 @@ namespace DataPlatformSI.DataLayer.Context
                 build.Property(product => product.Name).HasMaxLength(450).IsRequired();
                 build.HasOne(product => product.Category)
                        .WithMany(category => category.Products);
+            });
+
+            builder.Entity<Module>(build =>
+            {
+                build.Property(category => category.Name).HasMaxLength(450).IsRequired();
+                build.Property(category => category.SpaceName).HasMaxLength(450).IsRequired();
             });
 
 

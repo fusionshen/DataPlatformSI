@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Linq;
-using DataPlatformSI.Entities;
+using System.Threading.Tasks;
+using DataPlatformSI.Common.GuardToolkit;
+using DataPlatformSI.Common.IdentityToolkit;
+using DataPlatformSI.Entities.Modules;
+using DataPlatformSI.Services.Contracts;
+using DataPlatformSI.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -14,20 +19,33 @@ namespace DataPlatformSI.WebAPI.Controllers
     {
         private readonly string _moduleDirectory = $"{System.AppContext.BaseDirectory}/Downloads/Modules";
 
-        ModuleMetadata[] modules = new ModuleMetadata[]
+        Module[] modules = new Module[]
         {
-            new ModuleMetadata { Id = 1, ModuleName = "BasicModule",Checksum ="82240e32a858fbfe5e77b0c920b68e2c", ModuleType="DataPlatformRI.Modules.Basic.BasicModule, DataPlatformRI.Modules.Basic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" },
-            new ModuleMetadata { Id = 2, ModuleName = "UsersModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", ModuleType="DataPlatformRI.Modules.Users.UsersModule, DataPlatformRI.Modules.Users, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" },
-            new ModuleMetadata { Id = 3, ModuleName = "RolesModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", ModuleType="DataPlatformRI.Modules.Roles.RolesModule, DataPlatformRI.Modules.Roles, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" },
-            new ModuleMetadata { Id = 4, ModuleName = "MetasModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", ModuleType="DataPlatformRI.Modules.Metas.MetasModule, DataPlatformRI.Modules.Metas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" }
+            new Module { Id = 1, Name = "BasicModule",Checksum ="82240e32a858fbfe5e77b0c920b68e2c", ModuleType="DataPlatformRI.Modules.Basic.BasicModule, DataPlatformRI.Modules.Basic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" },
+            new Module { Id = 2, Name = "UsersModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", ModuleType="DataPlatformRI.Modules.Users.UsersModule, DataPlatformRI.Modules.Users, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" },
+            new Module { Id = 3, Name = "RolesModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", ModuleType="DataPlatformRI.Modules.Roles.RolesModule, DataPlatformRI.Modules.Roles, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" },
+            new Module { Id = 4, Name = "MetasModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", ModuleType="DataPlatformRI.Modules.Metas.MetasModule, DataPlatformRI.Modules.Metas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" }
         };
 
+        private readonly IModuleService _moduleService;
+
+        public ModulesController(IModuleService moduleService)
+        {
+            _moduleService = moduleService;
+            _moduleService.CheckArgumentIsNull(nameof(_moduleService));
+        }
+
+        /// <summary>
+        /// 获取模块列表
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Modules
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(modules);
+            return Json(await _moduleService.GetAllModulesAsync());
         }
+
 
         // GET: api/Modules/5
         [HttpGet("{id}")]
@@ -41,15 +59,33 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Ok(module);
         }
 
+        /// <summary>
+        /// 新增模块
+        /// </summary>
+        /// <param name="model">新增所需</param>
+        /// <returns></returns>
         // POST: api/Modules
         [HttpPost]
-        public void Post([FromBody] ModuleMetadata value)
+        public async Task<IActionResult> Post([FromBody] ModuleViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.DumpErrors(false));
+            }
+            var module = new Module() {
+            };
+            var result = await _moduleService.AddModuleAsync(module);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+            }
+        
+            return CreatedAtAction(nameof(Get), new { id = module.Id }, module);
         }
 
         // PUT: api/Modules/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] ModuleMetadata value)
+        public void Put(int id, [FromBody] Module value)
         {
         }
 
