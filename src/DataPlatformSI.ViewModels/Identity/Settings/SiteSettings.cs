@@ -6,6 +6,7 @@ namespace DataPlatformSI.ViewModels.Identity.Settings
 {
     public class SiteSettings
     {
+        public BasicModuleSeed BasicModuleSeed { get; set; }
         public AdminUserSeed AdminUserSeed { get; set; }
         public Logging Logging { get; set; }
         public SmtpConfig Smtp { get; set; }

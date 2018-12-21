@@ -12,22 +12,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using DataPlatformSI.ViewModels.Identity.Settings;
+using DataPlatformSI.Services.Contracts;
+using DataPlatformSI.Entities.Modules;
 
 namespace DataPlatformSI.Services.Identity
 {
     public class IdentityDbInitializer : IIdentityDbInitializer
     {
-        private readonly IOptionsSnapshot<SiteSettings> _adminUserSeedOptions;
+        private readonly IOptionsSnapshot<SiteSettings> _options;
         private readonly IApplicationUserManager _applicationUserManager;
         private readonly ILogger<IdentityDbInitializer> _logger;
         private readonly IApplicationRoleManager _roleManager;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IModuleService _moduleService;
 
         public IdentityDbInitializer(
             IApplicationUserManager applicationUserManager,
             IServiceScopeFactory scopeFactory,
             IApplicationRoleManager roleManager,
-            IOptionsSnapshot<SiteSettings> adminUserSeedOptions,
+            IModuleService moduleService,
+            IOptionsSnapshot<SiteSettings> options,
             ILogger<IdentityDbInitializer> logger
             )
         {
@@ -40,8 +44,11 @@ namespace DataPlatformSI.Services.Identity
             _roleManager = roleManager;
             _roleManager.CheckArgumentIsNull(nameof(_roleManager));
 
-            _adminUserSeedOptions = adminUserSeedOptions;
-            _adminUserSeedOptions.CheckArgumentIsNull(nameof(_adminUserSeedOptions));
+            _moduleService = moduleService;
+            _moduleService.CheckArgumentIsNull(nameof(_moduleService));
+
+            _options = options;
+            _options.CheckArgumentIsNull(nameof(_options));
 
             _logger = logger;
             _logger.CheckArgumentIsNull(nameof(_logger));
@@ -75,6 +82,11 @@ namespace DataPlatformSI.Services.Identity
                 {
                     throw new InvalidOperationException(result.DumpErrors());
                 }
+                result = identityDbSeedData.SeedDatabaseWithBasicModuleAsync().Result;
+                if (result == IdentityResult.Failed())
+                {
+                    throw new InvalidOperationException(result.DumpErrors());
+                }
 
                 // How to add initial data to the DB directly
                 using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
@@ -90,7 +102,7 @@ namespace DataPlatformSI.Services.Identity
 
         public async Task<IdentityResult> SeedDatabaseWithAdminUserAsync()
         {
-            var adminUserSeed = _adminUserSeedOptions.Value.AdminUserSeed;
+            var adminUserSeed = _options.Value.AdminUserSeed;
             adminUserSeed.CheckArgumentIsNull(nameof(adminUserSeed));
 
             var name = adminUserSeed.Username;
@@ -111,12 +123,7 @@ namespace DataPlatformSI.Services.Identity
             var adminRole = await _roleManager.FindByNameAsync(roleName);
             if (adminRole == null)
             {
-                //adminRole = new Role(roleName);
-                adminRole = new Role(roleName)
-                {
-                    DisplayName = "管理员",
-                    Description = "现阶段超级用户"
-                };
+                adminRole = new Role(roleName, "管理员", "现阶段超级用户");
                 var adminRoleResult = await _roleManager.CreateAsync(adminRole);
                 if (adminRoleResult == IdentityResult.Failed())
                 {
@@ -158,6 +165,44 @@ namespace DataPlatformSI.Services.Identity
                 return IdentityResult.Failed();
             }
 
+            return IdentityResult.Success;
+        }
+
+        public async Task<IdentityResult> SeedDatabaseWithBasicModuleAsync()
+        {
+
+            var basicModuleSeed = _options.Value.BasicModuleSeed;
+            basicModuleSeed.CheckArgumentIsNull(nameof(basicModuleSeed));
+
+            var moduleName = basicModuleSeed.ModuleName;
+            var spaceName = basicModuleSeed.SpaceName;
+
+            var thisMethodName = nameof(SeedDatabaseWithBasicModuleAsync);
+
+            var basicModule = await _moduleService.FindByNameAndSpaceAsyc(moduleName,spaceName);
+
+            if (basicModule != null)
+            {
+                _logger.LogInformation($"{thisMethodName}: basicModule already exists.");
+                return IdentityResult.Success;
+            }
+
+            basicModule = new Module
+            {
+                Name = moduleName,
+                SpaceName = spaceName,
+                DisplayName = "基础模块",
+                Checksum = Guid.NewGuid().ToString("N"),
+                CreatedTime = DateTimeOffset.UtcNow,
+                Version = "1.0.0.0",
+                IsCore = true
+            };
+            var basicModuleResult = await _moduleService.AddModuleAsync(basicModule);
+            if (basicModuleResult == IdentityResult.Failed())
+            {
+                _logger.LogError($"{thisMethodName}: adminUser CreateAsync failed. {basicModuleResult.DumpErrors()}");
+                return IdentityResult.Failed();
+            }
             return IdentityResult.Success;
         }
     }

@@ -12,13 +12,16 @@ using System.Threading.Tasks;
 using DataPlatformSI.ViewModels.Identity;
 using System.Data.SqlClient;
 using DataPlatformSI.Entities.Identity;
+using System.ComponentModel;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
     /// <summary>
     /// 角色管理
     /// </summary>
-    [Authorize(Roles = ConstantRoles.Admin)]
+    [Authorize(Policy = ConstantPolicies.DynamicPermission)]
+    [Area("DataPlatformRI.Modules.Roles")]
+    [DisplayName("角色模块")]
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
     public class RolesController : Controller
@@ -49,6 +52,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <returns>期望返回</returns>
         /// GET: api/Modules
+        [DisplayName("获取角色列表")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -105,6 +109,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">实体</param>
         /// <returns>期望返回</returns>
         // PUT: api/Roles/5
+        [DisplayName("编辑角色")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] RoleViewModel model)
         {
@@ -182,6 +187,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model"></param>
         /// <returns>期望返回</returns>
         // POST: api/Roles
+        [DisplayName("新增角色")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RoleViewModel model)
         {
@@ -260,6 +266,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="id">角色id</param>
         /// <returns></returns>
         // DELETE: api/Roles/5
+        [DisplayName("删除角色")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -27,8 +27,5 @@ namespace DataPlatformSI.ViewModels
 
         [Display(Name = "版本号")]
         public string Version { set; get; }
-
-        [Display(Name = "是否为外部模块")]
-        public bool IsCustom { set; get; }
     }
 }

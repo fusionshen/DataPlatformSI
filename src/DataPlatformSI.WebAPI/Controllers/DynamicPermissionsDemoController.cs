@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DataPlatformSI.WebAPI.Controllers
 {
     [Authorize(Policy = ConstantPolicies.DynamicPermission)]
-    [DisplayName("DynamicPermissionsDemoController")]
+    [Area("DataPlatformRI.Modules.Test1")]
+    [DisplayName("测试1模块")]
     public class DynamicPermissionsDemoController : Controller
     {
         [HttpPost]

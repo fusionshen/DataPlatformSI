@@ -11,13 +11,16 @@ using DataPlatformSI.Entities.Identity;
 using System.Data.SqlClient;
 using DataPlatformSI.ViewModels.Identity;
 using System;
+using System.ComponentModel;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
     /// <summary>
     /// 用户管理
     /// </summary>
-    [Authorize(Roles = ConstantRoles.Admin)]
+    [Authorize(Policy = ConstantPolicies.DynamicPermission)]
+    [Area("DataPlatformRI.Modules.Users")]
+    [DisplayName("用户模块")]
     [Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
     public class UsersController : Controller
@@ -64,6 +67,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// 获取所有用户列表
         /// </summary>
         /// <returns>期望返回</returns>
+        [DisplayName("获取用户列表")]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetUserList()
         {
@@ -132,6 +136,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="userId">用户Id</param>
         /// <param name="activate">是否激活</param>
         /// <returns>期望返回</returns>
+        [DisplayName("激活或失活用户")]
         [HttpPost("{userId}/[action]")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> ChangeUserStat(int userId, bool activate)
@@ -280,6 +285,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="model">新增所需</param>
         /// <returns>期望返回</returns>
+        [DisplayName("新增用户")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserViewModel model)
         {
@@ -321,6 +327,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <param name="model">用户所需</param>
         /// <returns>期望返回</returns>
         // PUT: api/Users/5
+        [DisplayName("修改用户")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UserViewModel model)
         {
@@ -364,6 +371,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// </summary>
         /// <param name="id">用户id</param>
         /// <returns></returns>
+        [DisplayName("删除用户")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 namespace DataPlatformSI.WebAPI.Controllers
 {
     [Authorize(Policy = ConstantPolicies.DynamicPermission)]
-    [DisplayName("DynamicPermissionsSampleController")]
+    [Area("DataPlatformRI.Modules.Test2")]
+    [DisplayName("测试2模块")]
     public class DynamicPermissionsSampleController : Controller
     {
         [DisplayName("Index")]

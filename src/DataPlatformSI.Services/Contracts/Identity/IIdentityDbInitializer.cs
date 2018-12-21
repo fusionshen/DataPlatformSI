@@ -20,5 +20,7 @@ namespace DataPlatformSI.Services.Contracts.Identity
         void SeedData();
 
         Task<IdentityResult> SeedDatabaseWithAdminUserAsync();
+
+        Task<IdentityResult> SeedDatabaseWithBasicModuleAsync();
     }
 }
