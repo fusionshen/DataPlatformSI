@@ -5,7 +5,6 @@ using DataPlatformSI.Services.Contracts.Identity;
 using DataPlatformSI.Services.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DataPlatformSI.Entities.Identity;
 using System.Data.SqlClient;
@@ -14,7 +13,6 @@ using System;
 using System.ComponentModel;
 using Microsoft.Extensions.Options;
 using DataPlatformSI.ViewModels.Identity.Settings;
-using DataPlatformSI.ViewModels.Identity.Emails;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
@@ -424,14 +422,15 @@ namespace DataPlatformSI.WebAPI.Controllers
             {
                 return BadRequest("USER ADMIN CANT BE RESET");
             }
-            var result = await _userManager.ResetPasswordAsync(user, await _userManager.GeneratePasswordResetTokenAsync(user), "safepass");
+            var date = DateTime.Now;
+            var password = $"s{date.Year}{date.Month}{date.Day}";
+            var result = await _userManager.ResetPasswordAsync(user, await _userManager.GeneratePasswordResetTokenAsync(user), password);
             if (result.Succeeded)
             {
+                Console.WriteLine($"----------------------------new password:{password}");
                 await _userManager.UpdateSecurityStampAsync(user);
-
                 // reflect the changes in the Identity cookie
                 await _signInManager.RefreshSignInAsync(user);
-
                 //await _emailSender.SendEmailAsync(
                 //           email: user.Email,
                 //           subject: "您的密码已重置",
@@ -442,12 +441,9 @@ namespace DataPlatformSI.WebAPI.Controllers
                 //               EmailSignature = _siteOptions.Value.Smtp.FromName,
                 //               MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
                 //           });
-                return Ok();
+                return Json(new { Success = true });
             }
-
             return BadRequest(result.DumpErrors(useHtmlNewLine: false));
         }
-
-
     }
 }
