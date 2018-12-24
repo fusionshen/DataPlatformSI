@@ -441,7 +441,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 //               EmailSignature = _siteOptions.Value.Smtp.FromName,
                 //               MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
                 //           });
-                return Json(new { Success = true });
+                return Ok(new { Success = true });
             }
             return BadRequest(result.DumpErrors(useHtmlNewLine: false));
         }

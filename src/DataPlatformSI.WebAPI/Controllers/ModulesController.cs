@@ -209,7 +209,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             {
                 return BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
             }
-            return Ok();
+            return Ok(new { Success = true });
         }
 
     }
