@@ -40,7 +40,6 @@ namespace DataPlatformSI.WebAPI.Controllers
         private readonly IUnitOfWork _uow;
         private readonly IAntiForgeryCookieService _antiforgery;
         private readonly IOptionsSnapshot<SiteSettings> _siteOptions;
-        private readonly IModuleService _moduleService;
 
         public AccountController(
             IApplicationUserManager userManager,
@@ -52,8 +51,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             IUnitOfWork uow,
             IAntiForgeryCookieService antiforgery,
             IOptionsSnapshot<SiteSettings> siteOptions,
-            ILogger<AccountController> logger,
-            IModuleService moduleService)
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _userManager.CheckArgumentIsNull(nameof(userManager));
@@ -84,9 +82,6 @@ namespace DataPlatformSI.WebAPI.Controllers
 
             _logger = logger;
             _logger.CheckArgumentIsNull(nameof(_logger));
-
-            _moduleService = moduleService;
-            _moduleService.CheckArgumentIsNull(nameof(_moduleService));
         }
 
         /// <summary>
@@ -232,24 +227,6 @@ namespace DataPlatformSI.WebAPI.Controllers
             var result = await _passwordValidator.ValidateAsync(
                 (UserManager<User>)_userManager, user, newPassword);
             return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
-        }
-
-        
-        /// <summary>
-        /// 用户信息 For Test
-        /// </summary>
-        /// <returns>用户信息</returns>
-        [Authorize]
-        [HttpGet("[action]"), HttpPost("[action]")]
-        public async Task<IActionResult> GetUserInfo()
-        {
-            var user = await _userManager.GetCurrentUserAsync();
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity.HasClaim(ClaimTypes.Role,ConstantRoles.Admin))
-            {
-                return Json(new { user.Id, Username = claimsIdentity.Name, Apps = (await _moduleService.GetAllModulesAsync()).Where(module => module.IsCore.HasValue).Select(module => module.Id).ToList(), Roles = new List<string> { ConstantRoles.Admin } });
-            }
-            return Json(new { user.Id, Username = claimsIdentity.Name });
         }
 
         /// <summary>

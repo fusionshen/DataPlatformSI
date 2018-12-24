@@ -16,6 +16,10 @@ using DataPlatformSI.Services.Identity;
 using DataPlatformSI.ViewModels.Identity;
 using System.IO;
 using DataPlatformSI.ViewModels.Identity.Emails;
+using System.Security.Claims;
+using DataPlatformSI.Services.Contracts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
@@ -37,6 +41,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         private readonly IUsersPhotoService _usersPhotoService;
         private readonly IUserValidator<User> _userValidator;
         private readonly ILogger<UserController> _logger;
+        private readonly IModuleService _moduleService;
 
         public UserController(
             IApplicationUserManager userManager,
@@ -48,7 +53,8 @@ namespace DataPlatformSI.WebAPI.Controllers
             IUsersPhotoService usersPhotoService,
             IOptionsSnapshot<SiteSettings> siteOptions,
             IEmailSender emailSender,
-            ILogger<UserController> logger)
+            ILogger<UserController> logger,
+            IModuleService moduleService)
         {
             _userManager = userManager;
             _userManager.CheckArgumentIsNull(nameof(_userManager));
@@ -79,39 +85,31 @@ namespace DataPlatformSI.WebAPI.Controllers
 
             _logger = logger;
             _logger.CheckArgumentIsNull(nameof(_logger));
+
+            _moduleService = moduleService;
+            _moduleService.CheckArgumentIsNull(nameof(_moduleService));
         }
 
-        ///// <summary>
-        ///// 获取个人信息
-        ///// </summary>
-        ///// <param name="userId">用户Id</param>
-        ///// <returns>期望返回</returns>
-        //[Authorize(Roles = ConstantRoles.Admin)]
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(int? userId)
-        //{
-        //    if (!userId.HasValue)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var user = await _userManager.FindByIdAsync(userId.ToString());
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return await RenderModel(user, isAdminEdit: true);
-        //}
+        /// <summary>
+        /// 获取个人基本信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var user = await _userManager.GetCurrentUserAsync();
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            if (claimsIdentity.HasClaim(ClaimTypes.Role, ConstantRoles.Admin))
+            {
+                return Json(new { user.Id, Username = claimsIdentity.Name, Apps = (await _moduleService.GetAllModulesAsync()).Where(module => module.IsCore.HasValue).Select(module => module.Id).ToList(), Roles = new List<string> { ConstantRoles.Admin } });
+            }
+            else
+            {
+                var roles = await _roleManager.GetRolesForUserAsync(user.Id);
 
-        ///// <summary>
-        ///// 获取个人信息
-        ///// </summary>
-        ///// <returns>期望返回</returns>
-        //[HttpGet]
-        //public async Task<IActionResult> Get()
-        //{
-        //    var user = await _userManager.GetCurrentUserAsync();
-        //    return await RenderModel(user, isAdminEdit: false);
-        //}
+                return Json(new { user.Id, Username = claimsIdentity.Name,Apps = (await _moduleService.GetAllModulesAsync()).Where(module => roles.Any(r => r.Claims.Any(c => c.ClaimValue.Contains(module.SpaceName)))).Select(module => module.Id).ToList(),Roles = roles.Select(r => r.Name).ToList() });
+            }
+        }
 
 
         /// <summary>

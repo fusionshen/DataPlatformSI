@@ -38,12 +38,6 @@
             <param name="newPassword">新密码</param>
             <returns>是否成功</returns>
         </member>
-        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.GetUserInfo">
-            <summary>
-            用户信息 For Test
-            </summary>
-            <returns>用户信息</returns>
-        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ValidatePasswordByEmail(System.String,System.String)">
             <summary>
             邮箱验证密码
@@ -298,6 +292,12 @@
             <summary>
             个人信息
             </summary>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.Get">
+            <summary>
+            
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.Get(System.Nullable{System.Int32})">
             <summary>

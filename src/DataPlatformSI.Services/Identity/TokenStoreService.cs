@@ -186,8 +186,13 @@ namespace DataPlatformSI.Services.Identity
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.Name, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer));
+                //add permissions
+                foreach (var permission in role.Claims)
+                {
+                    claims.Add(new Claim(ConstantPolicies.DynamicPermissionClaimType, permission.ClaimValue, ClaimValueTypes.String, _configuration.Value.BearerTokens.Issuer));
+                }
             }
-
+            
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Value.BearerTokens.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var now = DateTime.UtcNow;

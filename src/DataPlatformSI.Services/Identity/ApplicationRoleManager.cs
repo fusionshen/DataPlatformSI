@@ -69,15 +69,15 @@ namespace DataPlatformSI.Services.Identity
 
         #region CustomMethods
 
-        public Task<List<Role>> FindCurrentUserRoles()
-        {
-            var userId = GetCurrentUserId();
-            return FindUserRolesAsync(userId);
-        }
+        //public Task<List<Role>> FindCurrentUserRoles()
+        //{
+        //    var userId = GetCurrentUserId();
+        //    return FindUserRolesAsync(userId);
+        //}
 
         public Task<List<Role>> FindUserRolesAsync(int userId)
         {
-            var userRolesQuery = from role in Roles
+            var userRolesQuery = from role in Roles.Include(r => r.Claims)
                                  from user in role.Users
                                  where user.UserId == userId
                                  select role;
