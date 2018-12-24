@@ -12,6 +12,9 @@ using System.Data.SqlClient;
 using DataPlatformSI.ViewModels.Identity;
 using System;
 using System.ComponentModel;
+using Microsoft.Extensions.Options;
+using DataPlatformSI.ViewModels.Identity.Settings;
+using DataPlatformSI.ViewModels.Identity.Emails;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
@@ -29,15 +32,26 @@ namespace DataPlatformSI.WebAPI.Controllers
 
         private readonly IApplicationRoleManager _roleManager;
         private readonly IApplicationUserManager _userManager;
+        private readonly IApplicationSignInManager _signInManager;
+        private readonly IEmailSender _emailSender;
+        private readonly IOptionsSnapshot<SiteSettings> _siteOptions;
         public UsersController(
             IApplicationUserManager userManager,
-            IApplicationRoleManager roleManager)
+            IApplicationRoleManager roleManager,
+            IApplicationSignInManager signInManager,
+            IOptionsSnapshot<SiteSettings> siteOptions)
         {
             _userManager = userManager;
             _userManager.CheckArgumentIsNull(nameof(_userManager));
 
             _roleManager = roleManager;
             _roleManager.CheckArgumentIsNull(nameof(_roleManager));
+
+            _signInManager = signInManager;
+            _signInManager.CheckArgumentIsNull(nameof(_signInManager));
+
+            _siteOptions = siteOptions;
+            _siteOptions.CheckArgumentIsNull(nameof(_siteOptions));
         }
 
         /// <summary>
@@ -111,7 +125,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                     user.LockoutEnabled = activate;
                     thisUser = user;
                 });
-            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
         }
 
         /// <summary>
@@ -148,7 +162,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                     user.IsActive = activate;
                     thisUser = user;
                 });
-            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
         }
 
         /// <summary>
@@ -168,7 +182,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                     user.TwoFactorEnabled = activate;
                     thisUser = user;
                 });
-            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
         }
 
         /// <summary>
@@ -187,7 +201,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                     user.LockoutEnd = null;
                     thisUser = user;
                 });
-            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+            return result.Succeeded ? await ReturnUserCard(thisUser) : BadRequest(error: result.DumpErrors(useHtmlNewLine: false));
         }
 
         /// <summary>
@@ -390,8 +404,50 @@ namespace DataPlatformSI.WebAPI.Controllers
                 return BadRequest(result.DumpErrors(useHtmlNewLine: false));
             }
             return NoContent();
-            //return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: false));
         }
+
+        /// <summary>
+        /// 重置密码
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <returns></returns>
+        [DisplayName("重置密码")]
+        [HttpGet("{userId}/[action]")]
+        public async Task<IActionResult> ResetPassword(int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (user.NormalizedUserName == "ADMIN")
+            {
+                return BadRequest("USER ADMIN CANT BE RESET");
+            }
+            var result = await _userManager.ResetPasswordAsync(user, await _userManager.GeneratePasswordResetTokenAsync(user), "safepass");
+            if (result.Succeeded)
+            {
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                // reflect the changes in the Identity cookie
+                await _signInManager.RefreshSignInAsync(user);
+
+                //await _emailSender.SendEmailAsync(
+                //           email: user.Email,
+                //           subject: "您的密码已重置",
+                //           viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_ChangePasswordNotification.cshtml",
+                //           model: new ChangePasswordNotificationViewModel
+                //           {
+                //               User = user,
+                //               EmailSignature = _siteOptions.Value.Smtp.FromName,
+                //               MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
+                //           });
+                return Ok();
+            }
+
+            return BadRequest(result.DumpErrors(useHtmlNewLine: false));
+        }
+
 
     }
 }

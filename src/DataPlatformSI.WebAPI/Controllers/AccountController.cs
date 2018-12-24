@@ -234,45 +234,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
         }
 
-        /// <summary>
-        /// 修改密码
-        /// </summary>
-        /// <param name="model">修改密码所需信息</param>
-        /// <returns>是否修改成功</returns>
-        [Authorize]
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            var user = await _userManager.GetCurrentUserAsync();
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-            if (result.Succeeded)
-            {
-                await _userManager.UpdateSecurityStampAsync(user);
-
-                // reflect the changes in the Identity cookie
-                await _signInManager.RefreshSignInAsync(user);
-
-                await _emailSender.SendEmailAsync(
-                           email: user.Email,
-                           subject: "您的密码已重置",
-                           viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_ChangePasswordNotification.cshtml",
-                           model: new ChangePasswordNotificationViewModel
-                           {
-                               User = user,
-                               EmailSignature = _siteOptions.Value.Smtp.FromName,
-                               MessageDateTime = DateTime.UtcNow.ToLocalTime().ToString()
-                           });
-                return Ok();
-            }
-
-            return Json(result.DumpErrors(useHtmlNewLine: true));
-        }
-
+        
         /// <summary>
         /// 用户信息 For Test
         /// </summary>

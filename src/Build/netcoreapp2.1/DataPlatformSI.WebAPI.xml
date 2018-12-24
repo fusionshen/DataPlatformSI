@@ -38,13 +38,6 @@
             <param name="newPassword">新密码</param>
             <returns>是否成功</returns>
         </member>
-        <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.ChangePassword(DataPlatformSI.ViewModels.Identity.ChangePasswordViewModel)">
-            <summary>
-            修改密码
-            </summary>
-            <param name="model">修改密码所需信息</param>
-            <returns>是否修改成功</returns>
-        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.GetUserInfo">
             <summary>
             用户信息 For Test
@@ -329,6 +322,13 @@
             <param name="pid">加密的userId</param>
             <returns></returns>
         </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.ChangePassword(DataPlatformSI.ViewModels.Identity.ChangePasswordViewModel)">
+            <summary>
+            修改密码
+            </summary>
+            <param name="model">修改密码所需信息</param>
+            <returns>是否修改成功</returns>
+        </member>
         <member name="T:DataPlatformSI.WebAPI.Controllers.UsersController">
             <summary>
             用户管理
@@ -436,6 +436,13 @@
             删除用户
             </summary>
             <param name="id">用户id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.UsersController.ResetPassword(System.Int32)">
+            <summary>
+            重置密码
+            </summary>
+            <param name="userId">用户Id</param>
             <returns></returns>
         </member>
         <member name="T:DataPlatformSI.WebAPI.FunctionsController">
