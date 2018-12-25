@@ -1,25 +1,20 @@
-﻿using DataPlatformSI.DataLayer.Context;
+﻿using System;
+using DataPlatformSI.DataLayer.Context;
 using DataPlatformSI.Common.IdentityToolkit;
 using DataPlatformSI.Common.GuardToolkit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using DataPlatformSI.Services.Identity;
 using DataPlatformSI.Services.Contracts.Identity;
 using DataPlatformSI.Entities.Identity;
 using DataPlatformSI.ViewModels.Identity;
 using Microsoft.AspNetCore.Identity;
 using DataPlatformSI.ViewModels.Identity.Emails;
-using System;
 using Microsoft.Extensions.Options;
 using DataPlatformSI.ViewModels.Identity.Settings;
 using Microsoft.Extensions.Logging;
-using DataPlatformSI.Services.Contracts;
-using System.Linq;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {

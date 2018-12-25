@@ -101,39 +101,13 @@ namespace DataPlatformSI.WebAPI.Controllers
             var claimsIdentity = User.Identity as ClaimsIdentity;
             if (claimsIdentity.HasClaim(ClaimTypes.Role, ConstantRoles.Admin))
             {
-                return Json(new { user.Id, Username = claimsIdentity.Name, Apps = (await _moduleService.GetAllModulesAsync()).Where(module => module.IsCore.HasValue).Select(module => module.Id).ToList(), Roles = new List<string> { ConstantRoles.Admin } });
+                return Json(new { user.Id, Username = claimsIdentity.Name, Apps = (await _moduleService.GetAllModulesAsync()).Where(module => module.IsCore.HasValue).Select(module => module.Id).ToList(), Roles = new List<string> { ConstantRoles.Admin }, Info = RenderModel(user, isAdminEdit: true) });
             }
             else
             {
                 var roles = await _roleManager.GetRolesForUserAsync(user.Id);
 
-                return Json(new { user.Id, Username = claimsIdentity.Name,Apps = (await _moduleService.GetAllModulesAsync()).Where(module => roles.Any(r => r.Claims.Any(c => c.ClaimValue.Contains(module.SpaceName)))).Select(module => module.Id).ToList(),Roles = roles.Select(r => r.Name).ToList() });
-            }
-        }
-
-
-        /// <summary>
-        /// 获取个人信息
-        /// </summary>
-        /// <param name="userId">用户Id</param>
-        /// <returns>期望返回</returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int? userId)
-        {
-            if (userId.HasValue && !await _roleManager.IsCurrentUserInRoleAsync(ConstantRoles.Admin))
-            {
-                var user = await _userManager.FindByIdAsync(userId.ToString());
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                return await RenderModel(user, isAdminEdit: true);
-            }
-            else
-            {
-                var user = await _userManager.GetCurrentUserAsync();
-                return await RenderModel(user, isAdminEdit: false);
+                return Json(new { user.Id, Username = claimsIdentity.Name,Apps = (await _moduleService.GetAllModulesAsync()).Where(module => roles.Any(r => r.Claims.Any(c => c.ClaimValue.Contains(module.SpaceName)))).Select(module => module.Id).ToList(),Roles = roles.Select(r => r.Name).ToList(), Info = RenderModel(user, isAdminEdit: false) });
             }
         }
 
