@@ -295,7 +295,7 @@
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.Get">
             <summary>
-            
+            获取个人基本信息
             </summary>
             <returns></returns>
         </member>

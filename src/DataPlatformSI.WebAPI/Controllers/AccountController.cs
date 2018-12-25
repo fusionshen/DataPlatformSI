@@ -159,28 +159,26 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// 用户登出
         /// </summary>
         /// <param name="refreshToken">用于刷新的token</param>
-        /// <returns>是否登出</returns>
+        /// <returns>object</returns>
         [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<IActionResult> Logout(string refreshToken)
         {
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userIdValue = claimsIdentity.FindFirst(ClaimTypes.UserData)?.Value;
-
-            var user = User.Identity.IsAuthenticated ? await _userManager.FindByIdAsync(userIdValue) : null;
-            await _signInManager.SignOutAsync();
-            if (user != null)
+            var token = await _tokenStoreService.FindTokenAsync(refreshToken);
+            if (token == null)
             {
-                await _userManager.UpdateSecurityStampAsync(user);
-                // The Jwt implementation does not support "revoke OAuth token" (logout) by design.
-                // Delete the user's tokens from the database (revoke its bearer token)
-                await _tokenStoreService.RevokeUserBearerTokensAsync(userIdValue, refreshToken);
-                await _uow.SaveChangesAsync();
-                _antiforgery.DeleteAntiForgeryCookies();
-                _logger.LogInformation(4, $"{user.UserName} logged out.");
-                return Json("true");
+                return Unauthorized();
             }
-            return BadRequest("user not found");
+
+            await _signInManager.SignOutAsync();
+            await _userManager.UpdateSecurityStampAsync(token.User);
+            // The Jwt implementation does not support "revoke OAuth token" (logout) by design.
+            // Delete the user's tokens from the database (revoke its bearer token)
+            await _tokenStoreService.RevokeUserBearerTokensAsync(token.User.Id.ToString(), refreshToken);
+            await _uow.SaveChangesAsync();
+            _antiforgery.DeleteAntiForgeryCookies();
+            _logger.LogInformation(4, $"{token.User.UserName} logged out.");
+            return Json(new { Success = true });
         }
 
         /// <summary>
