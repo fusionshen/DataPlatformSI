@@ -101,13 +101,13 @@ namespace DataPlatformSI.WebAPI.Controllers
             var claimsIdentity = User.Identity as ClaimsIdentity;
             if (claimsIdentity.HasClaim(ClaimTypes.Role, ConstantRoles.Admin))
             {
-                return Json(new { user.Id, Username = claimsIdentity.Name, Apps = (await _moduleService.GetAllModulesAsync()).Where(module => module.IsCore.HasValue).Select(module => module.Id).ToList(), Roles = new List<string> { ConstantRoles.Admin }, Info = RenderModel(user, isAdminEdit: true) });
+                return Json(new { user.Id, Username = claimsIdentity.Name, Apps = (await _moduleService.GetAllModulesAsync()).Where(module => module.IsCore.HasValue).Select(module => module.Id).ToList(), Roles = new List<string> { ConstantRoles.Admin }, Info = await RenderModel(user, isAdminEdit: true) });
             }
             else
             {
                 var roles = await _roleManager.GetRolesForUserAsync(user.Id);
 
-                return Json(new { user.Id, Username = claimsIdentity.Name,Apps = (await _moduleService.GetAllModulesAsync()).Where(module => roles.Any(r => r.Claims.Any(c => c.ClaimValue.Contains(module.SpaceName)))).Select(module => module.Id).ToList(),Roles = roles.Select(r => r.Name).ToList(), Info = RenderModel(user, isAdminEdit: false) });
+                return Json(new { user.Id, Username = claimsIdentity.Name,Apps = (await _moduleService.GetAllModulesAsync()).Where(module => roles.Any(r => r.Claims.Any(c => c.ClaimValue.Contains(module.SpaceName)))).Select(module => module.Id).ToList(),Roles = roles.Select(r => r.Name).ToList(), Info = await RenderModel(user, isAdminEdit: false) });
             }
         }
 
@@ -228,7 +228,7 @@ namespace DataPlatformSI.WebAPI.Controllers
             }
         }
 
-        private async Task<IActionResult> RenderModel(User user, bool isAdminEdit)
+        private async Task<UserProfileViewModel> RenderModel(User user, bool isAdminEdit)
         {
             _usersPhotoService.SetUserDefaultPhoto(user);
 
@@ -254,7 +254,7 @@ namespace DataPlatformSI.WebAPI.Controllers
                 userProfile.DateOfBirthDay = user.BirthDate.Value.Day;
             }
 
-            return Json(userProfile);
+            return userProfile;
         }
 
         private async Task<(bool,string)> CanUpdateUserAvatarImage(UserProfileViewModel model, User user)

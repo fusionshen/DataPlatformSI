@@ -22,7 +22,7 @@
             用户登出
             </summary>
             <param name="refreshToken">用于刷新的token</param>
-            <returns>是否登出</returns>
+            <returns>object</returns>
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.AccountController.RefreshToken(Newtonsoft.Json.Linq.JToken)">
             <summary>
@@ -298,13 +298,6 @@
             获取个人基本信息
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.Get(System.Nullable{System.Int32})">
-            <summary>
-            获取个人信息
-            </summary>
-            <param name="userId">用户Id</param>
-            <returns>期望返回</returns>
         </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.UserController.Put(DataPlatformSI.ViewModels.Identity.UserProfileViewModel)">
             <summary>
