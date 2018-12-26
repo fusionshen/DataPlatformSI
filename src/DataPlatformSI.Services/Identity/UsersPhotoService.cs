@@ -35,6 +35,10 @@ namespace DataPlatformSI.Services.Identity
         public string GetUsersAvatarsFolderPath()
         {
             var usersAvatarsFolder = _siteSettings.Value.UsersAvatarsFolder;
+            if (string.IsNullOrWhiteSpace(_hostingEnvironment.WebRootPath))
+            {
+                _hostingEnvironment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
             var uploadsRootFolder = Path.Combine(_hostingEnvironment.WebRootPath, usersAvatarsFolder);
             if (!Directory.Exists(uploadsRootFolder))
             {
