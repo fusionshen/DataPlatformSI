@@ -32,4 +32,10 @@
     <ProjectReference Include="..\DataPlatformSI.ViewModels\DataPlatformSI.ViewModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Migrations\20190121082025_MDMServer.Designer.cs">
+      <DependentUpon>20190121082025_MDMServer.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

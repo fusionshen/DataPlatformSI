@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataPlatformSI.Common.GuardToolkit;
@@ -22,13 +21,13 @@ namespace DataPlatformSI.WebAPI.Controllers
     {
         private readonly string _moduleDirectory = $"{System.AppContext.BaseDirectory}/Downloads/Modules";
 
-        readonly Module[] modules = new Module[]
-        {
-            new Module { Id = 1, Name = "BasicModule",Checksum ="82240e32a858fbfe5e77b0c920b68e2c", SpaceName ="DataPlatformRI.Modules.Basic",Version ="1.0.0.0" },
-            new Module { Id = 2, Name = "UsersModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", SpaceName ="DataPlatformRI.Modules.Users",Version ="1.0.0.0" },
-            new Module { Id = 3, Name = "RolesModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", SpaceName ="DataPlatformRI.Modules.Roles",Version ="1.0.0.0" },
-            new Module { Id = 4, Name = "MetasModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", SpaceName ="DataPlatformRI.Modules.Metas",Version ="1.0.0.0" }
-        };
+        //readonly Module[] modules = new Module[]
+        //{
+        //    new Module { Id = 1, Name = "BasicModule",Checksum ="82240e32a858fbfe5e77b0c920b68e2c", SpaceName ="DataPlatformRI.Modules.Basic",Version ="1.0.0.0" },
+        //    new Module { Id = 2, Name = "UsersModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", SpaceName ="DataPlatformRI.Modules.Users",Version ="1.0.0.0" },
+        //    new Module { Id = 3, Name = "RolesModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", SpaceName ="DataPlatformRI.Modules.Roles",Version ="1.0.0.0" },
+        //    new Module { Id = 4, Name = "MetasModule",Checksum ="82240e32a858fbfe5e77b0c920b6472c", SpaceName ="DataPlatformRI.Modules.Metas",Version ="1.0.0.0" }
+        //};
 
         private readonly IModuleService _moduleService;
 

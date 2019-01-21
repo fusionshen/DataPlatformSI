@@ -5,14 +5,13 @@ using DataPlatformSI.Entities.Identity;
 using DataPlatformSI.Services;
 using DataPlatformSI.Services.Contracts;
 using DataPlatformSI.Services.Contracts.Identity;
+using DataPlatformSI.Services.Contracts.MDM;
 using DataPlatformSI.Services.Identity;
 using DataPlatformSI.Services.Identity.Logger;
-using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.AspNetCore.Authorization;
+using DataPlatformSI.Services.MDM;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DataPlatformSI.IocConfig
@@ -77,6 +76,7 @@ namespace DataPlatformSI.IocConfig
             services.AddScoped<ITokenValidatorService, TokenValidatorService>();
 
             services.AddScoped<IModuleService, ModuleService>();
+            services.AddScoped<IMDMServerService, MDMServerService>();
 
 
             return services;

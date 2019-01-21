@@ -13,10 +13,10 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DataPlatformSI.Entities.Modules;
+using DataPlatformSI.Entities.MDM;
 
 namespace DataPlatformSI.DataLayer.Context
 {
@@ -154,6 +154,7 @@ namespace DataPlatformSI.DataLayer.Context
         public virtual DbSet<Category> Categories { set; get; }
         public virtual DbSet<Product> Products { set; get; }
         public virtual DbSet<Module> Modules { get; set; }
+        public virtual DbSet<MDMServer> MDMServers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

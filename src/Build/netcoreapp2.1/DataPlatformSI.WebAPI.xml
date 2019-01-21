@@ -128,6 +128,41 @@
             <param name="days">几天前</param>
             <returns></returns>
         </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MDMServersController.Get">
+            <summary>
+            获取主数据服务器列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MDMServersController.Get(System.Int32)">
+            <summary>
+            获得单个主数据服务器
+            </summary>
+            <param name="id">服务器id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MDMServersController.Post(DataPlatformSI.ViewModels.MDM.MDMServerViewModel)">
+            <summary>
+            新增服务器
+            </summary>
+            <param name="model">新增所需</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MDMServersController.Put(System.Int32,DataPlatformSI.ViewModels.MDM.MDMServerViewModel)">
+            <summary>
+            修改主数据服务器信息
+            </summary>
+            <param name="id"></param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataPlatformSI.WebAPI.Controllers.MDMServersController.Delete(System.Int32)">
+            <summary>
+            删除主数据服务器
+            </summary>
+            <param name="id">服务器id</param>
+            <returns></returns>
+        </member>
         <member name="M:DataPlatformSI.WebAPI.Controllers.MetadatasController.GetJsonSchemaContentById(System.Int32)">
             <summary>
             下载JsonSchema
