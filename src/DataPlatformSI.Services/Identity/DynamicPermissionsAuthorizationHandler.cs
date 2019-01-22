@@ -47,27 +47,27 @@ namespace DataPlatformSI.Services.Identity
             var action = string.IsNullOrWhiteSpace(actionName) ? string.Empty : actionName;
 
             // How to access form values from an AuthorizationHandler
-            var request = mvcContext.HttpContext.Request;
-            if (request.Method.Equals("post", StringComparison.OrdinalIgnoreCase))
-            {
-                if (request.IsAjaxRequest() && request.ContentType.Contains("application/json"))
-                {
-                    var httpRequestInfoService = mvcContext.HttpContext.RequestServices.GetService<IHttpRequestInfoService>();
-                    var model = await httpRequestInfoService.DeserializeRequestJsonBodyAsAsync<RoleViewModel>();
-                    if (model != null)
-                    {
+            //var request = mvcContext.HttpContext.Request;
+            //if (request.Method.Equals("post", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    if (request.IsAjaxRequest() && request.ContentType.Contains("application/json"))
+            //    {
+            //        var httpRequestInfoService = mvcContext.HttpContext.RequestServices.GetService<IHttpRequestInfoService>();
+            //        var model = await httpRequestInfoService.DeserializeRequestJsonBodyAsAsync<RoleViewModel>();
+            //        if (model != null)
+            //        {
 
-                    }
-                }
-                else
-                {
-                    foreach (var item in request.Form)
-                    {
-                        var formField = item.Key;
-                        var formFieldValue = item.Value;
-                    }
-                }
-            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        foreach (var item in request.Form)
+            //        {
+            //            var formField = item.Key;
+            //            var formFieldValue = item.Value;
+            //        }
+            //    }
+            //}
 
             if (_securityTrimmingService.CanCurrentUserAccess(area, controller, action))
             {

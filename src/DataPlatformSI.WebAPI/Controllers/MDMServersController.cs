@@ -8,12 +8,15 @@ using DataPlatformSI.Common.GuardToolkit;
 using DataPlatformSI.Common.IdentityToolkit;
 using DataPlatformSI.ViewModels.MDM;
 using DataPlatformSI.Entities.MDM;
+using Microsoft.AspNetCore.Cors;
 
 namespace DataPlatformSI.WebAPI.Controllers
 {
     [Authorize(Policy = ConstantPolicies.DynamicPermission)]
     [Area("DataPlatformRI.Modules.MDM")]
     [DisplayName("主数据-服务器模块")]
+    [Route("api/[controller]")]
+    [EnableCors("CorsPolicy")]
     public class MDMServersController : Controller
     {
         private readonly IMDMServerService _serverService;
@@ -60,7 +63,7 @@ namespace DataPlatformSI.WebAPI.Controllers
         /// <returns></returns>
         // POST: api/MDMServers
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] MDMServerViewModel model)
+        public async Task<IActionResult> Post([FromBody]MDMServerViewModel model)
         {
             if (!ModelState.IsValid)
             {
