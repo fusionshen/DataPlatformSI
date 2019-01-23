@@ -76,8 +76,8 @@ namespace DataPlatformSI.IocConfig
             services.AddScoped<ITokenValidatorService, TokenValidatorService>();
 
             services.AddScoped<IModuleService, ModuleService>();
-            services.AddScoped<IMDMServerService, MDMServerService>();
-
+            services.AddScoped<IServerService, ServerService>();
+            services.AddScoped<IRepositoryService, RepositoryService>();
 
             return services;
         }

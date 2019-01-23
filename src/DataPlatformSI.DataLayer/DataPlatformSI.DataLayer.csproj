@@ -36,6 +36,9 @@
     <Compile Update="Migrations\20190121082025_MDMServer.Designer.cs">
       <DependentUpon>20190121082025_MDMServer.cs</DependentUpon>
     </Compile>
+    <Compile Update="Migrations\20190123083917_Repo.Designer.cs">
+      <DependentUpon>20190123083917_Repo.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

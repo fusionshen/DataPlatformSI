@@ -2,7 +2,7 @@
 
 namespace DataPlatformSI.Entities.MDM
 {
-    public class MDMServer : IAuditableEntity
+    public class Server : IAuditableEntity
     {
         public int Id { get; set; }
 

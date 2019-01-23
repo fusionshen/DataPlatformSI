@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace DataPlatformSI.Services.MDM
 {
-    public class MDMServerService : IMDMServerService
+    public class ServerService : IServerService
     {
         private readonly IUnitOfWork _uow;
-        private readonly DbSet<MDMServer> _servers;
-        public MDMServerService(IUnitOfWork uow)
+        private readonly DbSet<Server> _servers;
+        public ServerService(IUnitOfWork uow)
         {
             _uow = uow;
             _uow.CheckArgumentIsNull(nameof(_uow));
-            _servers = _uow.Set<MDMServer>();
+            _servers = _uow.Set<Server>();
         }
 
-        public async Task<IdentityResult> AddServerAsync(MDMServer server)
+        public async Task<IdentityResult> AddServerAsync(Server server)
         {
             var result = await ValidateServerAsync(server);
             if (!result.Succeeded)
@@ -33,24 +33,24 @@ namespace DataPlatformSI.Services.MDM
 
         }
 
-        private async Task<IdentityResult> ValidateServerAsync(MDMServer server)
+        private async Task<IdentityResult> ValidateServerAsync(Server server)
         {
             var errors = new List<IdentityError>();
 
             return errors.Count > 0 ? IdentityResult.Failed(errors.ToArray()) : IdentityResult.Success;
         }
 
-        public async Task<IList<MDMServer>> GetAllServersAsync()
+        public async Task<IList<Server>> GetAllServersAsync()
         {
             return await _servers.ToListAsync();
         }
 
-        public Task<MDMServer> GetServerByIdAsync(int id)
+        public async Task<Server> GetServerByIdAsync(int id)
         {
-            return _servers.FirstOrDefaultAsync(server => server.Id == id);
+            return await _servers.FirstOrDefaultAsync(server => server.Id == id);
         }
 
-        public async Task<IdentityResult> UpdateServerAsync(MDMServer server)
+        public async Task<IdentityResult> UpdateServerAsync(Server server)
         {
             var result = await ValidateServerAsync(server);
             if (!result.Succeeded)
@@ -62,7 +62,7 @@ namespace DataPlatformSI.Services.MDM
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> DeleteServerAsync(MDMServer server)
+        public async Task<IdentityResult> DeleteServerAsync(Server server)
         {
             _servers.Remove(server);
             try

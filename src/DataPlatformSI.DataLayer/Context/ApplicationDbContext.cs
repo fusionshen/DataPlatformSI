@@ -124,7 +124,6 @@ namespace DataPlatformSI.DataLayer.Context
         {
             ValidateEntities();
             SetShadowProperties();
-            //this.ApplyCorrectYeKe();
         }
 
         private void SetShadowProperties()
@@ -154,7 +153,8 @@ namespace DataPlatformSI.DataLayer.Context
         public virtual DbSet<Category> Categories { set; get; }
         public virtual DbSet<Product> Products { set; get; }
         public virtual DbSet<Module> Modules { get; set; }
-        public virtual DbSet<MDMServer> MDMServers { get; set; }
+        public virtual DbSet<Server> Servers { get; set; }
+        public virtual DbSet<Repository> Repositories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -183,10 +183,24 @@ namespace DataPlatformSI.DataLayer.Context
 
             builder.Entity<Module>(build =>
             {
-                build.Property(category => category.Name).HasMaxLength(450).IsRequired();
-                build.Property(category => category.SpaceName).HasMaxLength(450).IsRequired();
+                build.Property(module => module.Name).HasMaxLength(450).IsRequired();
+                build.Property(module => module.SpaceName).HasMaxLength(450).IsRequired();
             });
 
+            builder.Entity<Server>(build =>
+            {
+                build.Property(server => server.Name).HasMaxLength(450).IsRequired();
+            });
+
+            builder.Entity<Repository>(build =>
+            {
+                build.Property(repo => repo.Name).HasMaxLength(450).IsRequired();
+                build.Property(repo => repo.DisplayName).HasMaxLength(450).IsRequired();
+                build.Property(repo => repo.Server).HasMaxLength(450).IsRequired();
+                build.Property(repo => repo.UserName).HasMaxLength(450).IsRequired();
+                build.Property(repo => repo.Password).HasMaxLength(450).IsRequired();
+                build.Property(repo => repo.Port).HasMaxLength(450).IsRequired();
+            });
 
             // This should be placed here, at the end.
             builder.AddAuditableShadowProperties();
