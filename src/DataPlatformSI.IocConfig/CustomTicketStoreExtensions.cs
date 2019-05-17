@@ -3,6 +3,7 @@ using DataPlatformSI.Services.Identity;
 using DataPlatformSI.ViewModels.Identity.Settings;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DataPlatformSI.IocConfig
 {
@@ -15,16 +16,35 @@ namespace DataPlatformSI.IocConfig
             var cookieOptions = siteSettings.CookieOptions;
             if (cookieOptions.UseDistributedCacheTicketStore)
             {
-                services.AddDistributedSqlServerCache(options =>
+                switch (siteSettings.ActiveDatabase)
                 {
-                    var cacheOptions = cookieOptions.DistributedSqlServerCacheOptions;
-                    var connectionString = string.IsNullOrWhiteSpace(cacheOptions.ConnectionString) ?
-                            siteSettings.GetDbConnectionString() :
-                            cacheOptions.ConnectionString;
-                    options.ConnectionString = connectionString;
-                    options.SchemaName = cacheOptions.SchemaName;
-                    options.TableName = cacheOptions.TableName;
-                });
+                    case ActiveDatabase.SqlServer:
+                        services.AddDistributedSqlServerCache(options =>
+                        {
+                            var cacheOptions = cookieOptions.DistributedSqlServerCacheOptions;
+                            var connectionString = string.IsNullOrWhiteSpace(cacheOptions.ConnectionString) ?
+                                    siteSettings.GetDbConnectionString() :
+                                    cacheOptions.ConnectionString;
+                            options.ConnectionString = connectionString;
+                            options.SchemaName = cacheOptions.SchemaName;
+                            options.TableName = cacheOptions.TableName;
+                        });
+                        break;
+                    case ActiveDatabase.MySql:
+                        services.AddDistributedMySqlCache(options =>
+                        {
+                            var cacheOptions = cookieOptions.DistributedSqlServerCacheOptions;
+                            var connectionString = string.IsNullOrWhiteSpace(cacheOptions.ConnectionString) ?
+                                    siteSettings.GetDbConnectionString() :
+                                    cacheOptions.ConnectionString;
+                            options.ConnectionString = connectionString;
+                            options.SchemaName = cacheOptions.SchemaName;
+                            options.TableName = cacheOptions.TableName;
+                        });
+                        break;
+                    default:
+                        throw new NotSupportedException("Please set the ActiveDatabase in appsettings.json file.");
+                }
                 services.AddScoped<ITicketStore, DistributedCacheTicketStore>();
             }
             else

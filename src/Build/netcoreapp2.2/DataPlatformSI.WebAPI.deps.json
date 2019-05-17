@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "bc894269f79b20b047232745eff0384156d40d0a"
+    "signature": "a3679a899fa9394e03faefe873f5ec2a0d4fcfef"
   },
   "compilationOptions": {
     "defines": [
@@ -651,6 +651,22 @@
           "lib/netstandard2.0/Pomelo.EntityFrameworkCore.MySql.dll": {}
         }
       },
+      "Pomelo.Extensions.Caching.MySql/2.0.1": {
+        "dependencies": {
+          "Microsoft.Extensions.Caching.Abstractions": "2.2.0",
+          "Microsoft.Extensions.Options": "2.2.0",
+          "MySqlConnector": "0.49.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Pomelo.Extensions.Caching.MySql.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Pomelo.Extensions.Caching.MySql.dll": {}
+        }
+      },
       "Pomelo.JsonObject/2.2.0": {
         "dependencies": {
           "Microsoft.CSharp": "4.5.0",
@@ -1114,7 +1130,8 @@
           "DataPlatformSI.Services": "1.0.0",
           "DataPlatformSI.ViewModels": "1.0.0",
           "Microsoft.Extensions.DependencyInjection": "2.2.0",
-          "Swashbuckle.AspNetCore": "4.0.1"
+          "Swashbuckle.AspNetCore": "4.0.1",
+          "Pomelo.Extensions.Caching.MySql": "2.0.1"
         },
         "runtime": {
           "DataPlatformSI.IocConfig.dll": {}
@@ -4901,6 +4918,13 @@
       "sha512": "sha512-OIIR2ASp8J5VyIf2i9cli8BjvD0kZl5zCwi4DBR/E/D0WVt+iZyKwGhCLt1V9+KiXQbYcYAujuKN3cMmwk5nZg==",
       "path": "pomelo.entityframeworkcore.mysql/2.2.0",
       "hashPath": "pomelo.entityframeworkcore.mysql.2.2.0.nupkg.sha512"
+    },
+    "Pomelo.Extensions.Caching.MySql/2.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vYa3Vg2EI+B4IBN1l9GKKPucOH5l70nedU4mmRmNerxf+VmXUxHDv3qJ4Tn6HSR2zqUOBMGgruINoAgJ5gQCtg==",
+      "path": "pomelo.extensions.caching.mysql/2.0.1",
+      "hashPath": "pomelo.extensions.caching.mysql.2.0.1.nupkg.sha512"
     },
     "Pomelo.JsonObject/2.2.0": {
       "type": "package",
