@@ -1,8 +1,33 @@
 version: '3.4'
 
 services:
-  dataplatformsi.webapi:
+  webapi:
+    container_name: xhq.webapi
     image: ${DOCKER_REGISTRY}dataplatformsiwebapi
     build:
       context: .
       dockerfile: ./DataPlatformSI.WebAPI/Dockerfile
+    depends_on:
+      - db
+    links:
+      - db
+
+  db:
+    container_name: xhq.db
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  
+  reverse-proxy:
+    container_name: xhq.proxy
+    image: nginx
+    depends_on:
+      - webapi
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./proxy.conf:/etc/nginx/conf.d/default.conf

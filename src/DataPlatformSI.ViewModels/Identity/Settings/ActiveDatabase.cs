@@ -4,6 +4,7 @@
     {
         LocalDb,
         SqlServer,
+        MySql,
         InMemoryDatabase
     }
 }

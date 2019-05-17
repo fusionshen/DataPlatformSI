@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2047
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28902.138
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.WebAPI", "src\DataPlatformSI.WebAPI\DataPlatformSI.WebAPI.csproj", "{1A97E5EB-7BFB-470A-BDA4-A5EF74261F7D}"
 EndProject
@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.IocConfig", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.Entities", "src\DataPlatformSI.Entities\DataPlatformSI.Entities.csproj", "{3BC9FC3B-438B-46ED-A557-EFB05D48050B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.MSTests", "src\DataPlatformSI.MSTests\DataPlatformSI.MSTests.csproj", "{C12F2F81-CF2C-420B-9E36-22DF944464FC}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "src\docker-compose.dcproj", "{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPlatformSI.MSTests", "src\DataPlatformSI.MSTests\DataPlatformSI.MSTests.csproj", "{ABA97214-B0B1-4A10-A9DD-91A7D77501D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +55,14 @@ Global
 		{3BC9FC3B-438B-46ED-A557-EFB05D48050B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BC9FC3B-438B-46ED-A557-EFB05D48050B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BC9FC3B-438B-46ED-A557-EFB05D48050B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C12F2F81-CF2C-420B-9E36-22DF944464FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C12F2F81-CF2C-420B-9E36-22DF944464FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C12F2F81-CF2C-420B-9E36-22DF944464FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C12F2F81-CF2C-420B-9E36-22DF944464FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7E6DAB-8D7C-4E40-947B-03CB807F61AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABA97214-B0B1-4A10-A9DD-91A7D77501D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABA97214-B0B1-4A10-A9DD-91A7D77501D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABA97214-B0B1-4A10-A9DD-91A7D77501D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABA97214-B0B1-4A10-A9DD-91A7D77501D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

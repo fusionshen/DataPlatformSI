@@ -75,6 +75,8 @@ namespace DataPlatformSI.DataLayer.Mappings
             modelBuilder.Entity<AppDataProtectionKey>(builder =>
             {
                 builder.ToTable("AppDataProtectionKeys");
+                builder.HasKey(e => e.Id);
+                builder.Property(e => e.Id).ValueGeneratedOnAdd();
                 builder.HasIndex(e => e.FriendlyName).IsUnique();
             });
         }

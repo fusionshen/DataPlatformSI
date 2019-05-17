@@ -29,7 +29,9 @@ namespace DataPlatformSI.DataLayer.Context
                 case ActiveDatabase.SqlServer:
                     serviceCollection.AddEntityFrameworkSqlServer();
                     break;
-
+                case ActiveDatabase.MySql:
+                    serviceCollection.AddEntityFrameworkMySql();
+                    break;
                 default:
                     throw new NotSupportedException("Please set the ActiveDatabase in appsettings.json file.");
             }
@@ -48,6 +50,16 @@ namespace DataPlatformSI.DataLayer.Context
                 case ActiveDatabase.LocalDb:
                 case ActiveDatabase.SqlServer:
                     optionsBuilder.UseSqlServer(
+                        siteSettings.GetDbConnectionString()
+                        , serverDbContextOptionsBuilder =>
+                        {
+                            var minutes = (int)TimeSpan.FromMinutes(3).TotalSeconds;
+                            serverDbContextOptionsBuilder.CommandTimeout(minutes);
+                            serverDbContextOptionsBuilder.EnableRetryOnFailure();
+                        });
+                    break;
+                case ActiveDatabase.MySql:
+                    optionsBuilder.UseMySql(
                         siteSettings.GetDbConnectionString()
                         , serverDbContextOptionsBuilder =>
                         {
@@ -86,6 +98,9 @@ namespace DataPlatformSI.DataLayer.Context
 
                 case ActiveDatabase.SqlServer:
                     return siteSettingsValue.ConnectionStrings.SqlServer.ApplicationDbContextConnection;
+
+                case ActiveDatabase.MySql:
+                    return siteSettingsValue.ConnectionStrings.MySql;
 
                 default:
                     throw new NotSupportedException("Please set the ActiveDatabase in appsettings.json file.");

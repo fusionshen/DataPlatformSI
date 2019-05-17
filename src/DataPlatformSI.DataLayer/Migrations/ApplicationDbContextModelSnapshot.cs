@@ -3,7 +3,6 @@ using System;
 using DataPlatformSI.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataPlatformSI.DataLayer.Migrations
@@ -15,15 +14,13 @@ namespace DataPlatformSI.DataLayer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("DataPlatformSI.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedByBrowserName")
                         .HasMaxLength(1000);
@@ -60,8 +57,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Identity.AppDataProtectionKey", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("FriendlyName");
 
@@ -70,8 +66,7 @@ namespace DataPlatformSI.DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FriendlyName")
-                        .IsUnique()
-                        .HasFilter("[FriendlyName] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("AppDataProtectionKeys");
                 });
@@ -79,8 +74,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Identity.AppLogItem", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedByBrowserName")
                         .HasMaxLength(1000);
@@ -145,8 +139,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Identity.Role", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -185,8 +178,7 @@ namespace DataPlatformSI.DataLayer.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasName("RoleNameIndex");
 
                     b.ToTable("AppRoles");
                 });
@@ -194,8 +186,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Identity.RoleClaim", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClaimType");
 
@@ -233,8 +224,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Identity.User", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
 
@@ -315,8 +305,7 @@ namespace DataPlatformSI.DataLayer.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasName("UserNameIndex");
 
                     b.ToTable("AppUsers");
                 });
@@ -324,8 +313,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Identity.UserClaim", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClaimType");
 
@@ -478,8 +466,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Identity.UserUsedPassword", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedByBrowserName")
                         .HasMaxLength(1000);
@@ -517,8 +504,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.MDM.Repository", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedByBrowserName")
                         .HasMaxLength(1000);
@@ -572,8 +558,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.MDM.Server", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedByBrowserName")
                         .HasMaxLength(1000);
@@ -607,8 +592,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Modules.Module", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Checksum");
 
@@ -658,8 +642,7 @@ namespace DataPlatformSI.DataLayer.Migrations
             modelBuilder.Entity("DataPlatformSI.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("CategoryId");
 

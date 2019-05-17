@@ -5,40 +5,56 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20180829092234_V20180829.cs" />
+    <Compile Remove="Migrations\20180829092234_V20180829.Designer.cs" />
     <Compile Remove="Migrations\20181105010516_V201811050905.cs" />
+    <Compile Remove="Migrations\20181105010638_V201811050906.cs" />
+    <Compile Remove="Migrations\20181105010638_V201811050906.Designer.cs" />
+    <Compile Remove="Migrations\20181106093206_V201811061732.cs" />
+    <Compile Remove="Migrations\20181106093206_V201811061732.Designer.cs" />
+    <Compile Remove="Migrations\20181126082847_addRoleDisplayName.cs" />
+    <Compile Remove="Migrations\20181126082847_addRoleDisplayName.Designer.cs" />
     <Compile Remove="Migrations\20181211060746_V201812111407.cs" />
+    <Compile Remove="Migrations\20181211060930_DeleteUserSerialNumber.cs" />
+    <Compile Remove="Migrations\20181211060930_DeleteUserSerialNumber.Designer.cs" />
     <Compile Remove="Migrations\20181218025412_moduleTabl.cs" />
+    <Compile Remove="Migrations\20181218025506_ModuleToTable.cs" />
+    <Compile Remove="Migrations\20181218025506_ModuleToTable.Designer.cs" />
+    <Compile Remove="Migrations\20181220091912_coreModule.cs" />
+    <Compile Remove="Migrations\20181220091912_coreModule.Designer.cs" />
+    <Compile Remove="Migrations\20181221015639_moduleTable.cs" />
+    <Compile Remove="Migrations\20181221015639_moduleTable.Designer.cs" />
+    <Compile Remove="Migrations\20190121082025_MDMServer.cs" />
+    <Compile Remove="Migrations\20190121082025_MDMServer.Designer.cs" />
+    <Compile Remove="Migrations\20190123083917_Repo.cs" />
+    <Compile Remove="Migrations\20190123083917_Repo.Designer.cs" />
+    <Compile Remove="Migrations\20190517045054_xhq.cs" />
+    <Compile Remove="Migrations\20190517045054_xhq.Designer.cs" />
+    <Compile Remove="Migrations\20190517050155_xhq.cs" />
+    <Compile Remove="Migrations\20190517050155_xhq.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
-    <PackageReference Include="Microsoft.entityframeworkcore" Version="2.2.1" />
-    <PackageReference Include="microsoft.entityframeworkcore.design" Version="2.2.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.1" />
-    <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="2.2.1" />
-    <PackageReference Include="microsoft.entityframeworkcore.tools" Version="2.2.1">
+    <PackageReference Include="Microsoft.entityframeworkcore" Version="2.2.4" />
+    <PackageReference Include="microsoft.entityframeworkcore.design" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.4" />
+    <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="2.2.4" />
+    <PackageReference Include="microsoft.entityframeworkcore.tools" Version="2.2.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.binder" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.binder" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="pomelo.entityframeworkcore.mysql" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataPlatformSI.Entities\DataPlatformSI.Entities.csproj" />
     <ProjectReference Include="..\DataPlatformSI.ViewModels\DataPlatformSI.ViewModels.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Migrations\20190121082025_MDMServer.Designer.cs">
-      <DependentUpon>20190121082025_MDMServer.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Migrations\20190123083917_Repo.Designer.cs">
-      <DependentUpon>20190123083917_Repo.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>
