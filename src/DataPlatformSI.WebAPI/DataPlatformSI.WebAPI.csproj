@@ -39,7 +39,7 @@
   <ItemGroup>
     <PackageReference Include="DNTBreadCrumb.Core" Version="1.8.0" />
     <PackageReference Include="DNTCaptcha.Core" Version="1.6.7" />
-    <PackageReference Include="microsoft.aspnetcore.all" Version="2.2.5" />
+    <PackageReference Include="microsoft.aspnetcore.all" Version="2.2.7" />
     <PackageReference Include="microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
